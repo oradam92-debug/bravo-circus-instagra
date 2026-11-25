@@ -4,6 +4,7 @@
   python -m agent.main plan       # Claude writes the next week of daily posts into content/queue.yaml
   python -m agent.main publish    # publish today's due post(s)
   python -m agent.main reply      # answer comments (and DMs if ENABLE_DMS=true)
+  python -m agent.main tour       # queue "מחר אנחנו מגיעים ל..." posts (poster + Kupat link) from content/tour.yaml
   python -m agent.main refresh    # extend the Instagram token by 60 days
 """
 from __future__ import annotations
@@ -51,6 +52,13 @@ def cmd_plan(cfg: Config, args) -> None:
     queue = load_queue()
     today = now(cfg).date()
     planned_dates = {str(p["date"]) for p in queue if p.get("status") != "published"}
+    # Days before a show belong to the "מחר אנחנו מגיעים" tour post – keep them free.
+    from .tour import load_tour
+    for s in load_tour().get("shows") or []:
+        try:
+            planned_dates.add((dt.date.fromisoformat(str(s["date"])) - dt.timedelta(days=1)).isoformat())
+        except (KeyError, ValueError):
+            pass
 
     media = sorted(f for f in MEDIA_DIR.glob("*") if f.suffix.lower() in MEDIA_EXT | {".png", ".webp"})
     if not media:
@@ -193,6 +201,58 @@ def cmd_reply(cfg: Config, _args) -> None:
     print("סיכום:", stats, "(DRY_RUN)" if cfg.dry_run else "")
 
 
+# ---------------------------------------------------------------- tour
+def cmd_tour(cfg: Config, args) -> None:
+    from . import tour as T
+    schedule = T.load_tour()
+    queue = load_queue()
+    have = {p.get("tour_key") for p in queue if p.get("tour_key")}
+    today = now(cfg).date()
+    post_time = os.getenv("TOUR_POST_TIME") or schedule.get("post_time") or "10:00"
+    base_name = schedule.get("poster_base") or ""
+    base = MEDIA_DIR / base_name if base_name else None
+    b = None
+    added = 0
+    # A post goes up the day BEFORE each show day ("מחר ...").
+    for offset in range(1, args.days + 1):
+        show_day = today + dt.timedelta(days=offset)
+        for stop in T.stops_for(show_day, schedule):
+            key = f"{stop['date']}|{stop['city']}"
+            if key in have:
+                continue
+            if stop.get("poster"):
+                media = [stop["poster"]]
+                if not (MEDIA_DIR / stop["poster"]).exists():
+                    log.warning("poster %s not found in media/ – generating one", stop["poster"])
+                    media = []
+            else:
+                media = []
+            if not media:
+                out = T.POSTER_DIR / f"{T.slug(stop)}.jpg"
+                T.make_poster(stop, out, base)
+                media = [str(out.relative_to(MEDIA_DIR))]
+            caption = ""
+            if cfg.anthropic_api_key:
+                try:
+                    b = b or brain(cfg)
+                    caption = b.tour_caption(stop)
+                except Exception as e:  # never skip the post because of the model
+                    log.warning("tour caption via Claude failed (%s) – using template", e)
+            caption = caption or T.fallback_caption(stop)
+            queue.append({
+                "date": (show_day - dt.timedelta(days=1)).isoformat(), "time": post_time,
+                "media": media, "caption": caption, "idea": f"מחר מגיעים ל{stop['city']}",
+                "approved": os.getenv("AUTO_APPROVE", "true").lower() == "true",
+                "status": "scheduled", "tour_key": key,
+            })
+            have.add(key)
+            added += 1
+            print(f"נוסף פוסט סיבוב: {key} -> {media[0]}")
+    queue.sort(key=lambda p: (str(p["date"]), str(p.get("time", ""))))
+    save_queue(queue)
+    print(f"נוספו {added} פוסטים של 'מחר אנחנו מגיעים'.")
+
+
 # ---------------------------------------------------------------- refresh
 def cmd_refresh(cfg: Config, _args) -> None:
     data = ig_client(cfg).refresh_token()
@@ -214,11 +274,13 @@ def main(argv=None) -> None:
     p.add_argument("--days", type=int, default=7)
     sub.add_parser("publish")
     sub.add_parser("reply")
+    t = sub.add_parser("tour")
+    t.add_argument("--days", type=int, default=2, help="כמה ימים קדימה לבדוק בלוח")
     sub.add_parser("refresh")
     args = ap.parse_args(argv)
     cfg = Config.load()
     {"check": cmd_check, "plan": cmd_plan, "publish": cmd_publish,
-     "reply": cmd_reply, "refresh": cmd_refresh}[args.cmd](cfg, args)
+     "reply": cmd_reply, "tour": cmd_tour, "refresh": cmd_refresh}[args.cmd](cfg, args)
 
 
 if __name__ == "__main__":

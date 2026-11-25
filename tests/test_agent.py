@@ -79,3 +79,28 @@ def test_reply_and_escalate(repo, monkeypatch):
 def test_json_parsing():
     assert _json('```json\n[{"a": 1}]\n```') == [{"a": 1}]
     assert _json('sure: {"action": "reply"}')["action"] == "reply"
+
+
+def test_tour_posts_day_before_with_poster(repo, monkeypatch, tmp_path):
+    from agent import tour as T
+    tour_file = tmp_path / "tour.yaml"
+    tour_file.write_text(
+        "post_time: '09:30'\nshows:\n"
+        "  - {date: 2026-12-12, time: '16:00', city: חיפה, venue: אולם אורן, link: https://kupat/haifa}\n"
+        "  - {date: 2026-12-12, time: '12:00', city: חיפה, venue: אולם אורן}\n"
+        "  - {date: 2026-12-20, time: '17:00', city: אילת}\n", encoding="utf-8")
+    monkeypatch.setattr(T, "TOUR_FILE", tour_file)
+    monkeypatch.setattr(T, "POSTER_DIR", tmp_path / "media" / "tour")
+    monkeypatch.setattr(m, "MEDIA_DIR", tmp_path / "media")
+    monkeypatch.delenv("ANTHROPIC_API_KEY")  # template caption, no network
+    monkeypatch.setattr(m, "now", lambda cfg: dt.datetime(2026, 12, 11, 6, 0))
+    cfg = m.Config.load()
+    m.cmd_tour(cfg, SimpleNamespace(days=2))
+    m.cmd_tour(cfg, SimpleNamespace(days=2))  # idempotent
+    q = store.load_queue(repo)
+    assert len(q) == 1
+    p = q[0]
+    assert p["date"] == "2026-12-11" and p["time"] == "09:30"
+    assert "מחר אנחנו מגיעים לחיפה" in p["caption"] and "https://kupat/haifa" in p["caption"]
+    assert "12:00 | 16:00" in p["caption"]
+    assert (tmp_path / "media" / p["media"][0]).exists()
