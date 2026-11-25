@@ -97,3 +97,29 @@ class Brain:
         except Exception as e:  # never reply with garbage – escalate instead
             log.warning("decide_reply failed: %s", e)
             return {"action": "escalate", "reply": "", "reason": f"model error: {e}"}
+
+    # ---------- tour: "tomorrow we arrive at ..." ----------
+    def tour_caption(self, stop: dict) -> str:
+        system = (
+            "אתה מנהל הסושיאל של קרקס בראבו וכותב פוסט לאינסטגרם בעברית לפי מדריך המותג. "
+            "אסור להמציא מחירים, שעות, אולמות או אמנים – השתמש רק בפרטים שנמסרו לך ובמדריך.\n\n"
+            + _brand()
+        )
+        prompt = f"""כתוב פוסט קצר ומרגש לקראת ההופעה של מחר.
+עיר: {stop['city']}
+תאריך: {stop['date']}
+שעות: {', '.join(stop['times']) or 'לא צוין'}
+אולם: {stop.get('venue') or 'לא צוין'}
+{('הערה: ' + stop['note']) if stop.get('note') else ''}
+קישור לכרטיסים בקופת תל אביב: {stop['link']}
+
+חובה:
+- לפתוח ב"מחר אנחנו מגיעים ל{stop['city']}!" (אפשר עם אימוג'ים).
+- לציין תאריך, שעות ואולם בדיוק כפי שנמסרו.
+- לכתוב "כרטיסים בקופת תל אביב – קישור בביו" ולהדביק את הקישור המלא בשורה נפרדת.
+- 5-10 האשטגים בסוף, כולל עם שם העיר.
+החזר רק את טקסט הפוסט, בלי הסברים."""
+        text = self._ask(system, prompt, max_tokens=1200).strip()
+        if stop["link"] not in text:
+            text += f"\n\n🎟️ כרטיסים בקופת תל אביב:\n{stop['link']}"
+        return text
