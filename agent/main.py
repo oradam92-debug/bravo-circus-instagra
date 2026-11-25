@@ -1,0 +1,225 @@
+"""CLI entry point.
+
+  python -m agent.main check      # verify tokens & account
+  python -m agent.main plan       # Claude writes the next week of daily posts into content/queue.yaml
+  python -m agent.main publish    # publish today's due post(s)
+  python -m agent.main reply      # answer comments (and DMs if ENABLE_DMS=true)
+  python -m agent.main refresh    # extend the Instagram token by 60 days
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import logging
+import os
+import sys
+from zoneinfo import ZoneInfo
+
+import requests
+
+from .config import MEDIA_DIR, Config
+from .instagram import Instagram, InstagramError
+from .store import load_queue, load_state, save_queue, save_state
+
+log = logging.getLogger("agent")
+MEDIA_EXT = {".jpg", ".jpeg", ".mp4", ".mov"}
+
+
+def now(cfg: Config) -> dt.datetime:
+    return dt.datetime.now(ZoneInfo(cfg.timezone))
+
+
+def ig_client(cfg: Config) -> Instagram:
+    cfg.require("ig_user_id", "ig_access_token")
+    return Instagram(cfg.ig_user_id, cfg.ig_access_token, cfg.graph_version, cfg.dry_run)
+
+
+def brain(cfg: Config):
+    from .brain import Brain
+    cfg.require("anthropic_api_key")
+    return Brain(cfg.anthropic_api_key, cfg.model)
+
+
+# ---------------------------------------------------------------- check
+def cmd_check(cfg: Config, _args) -> None:
+    print(ig_client(cfg).me())
+    print("DRY_RUN =", cfg.dry_run, "| ENABLE_DMS =", cfg.enable_dms)
+
+
+# ---------------------------------------------------------------- plan
+def cmd_plan(cfg: Config, args) -> None:
+    queue = load_queue()
+    today = now(cfg).date()
+    planned_dates = {str(p["date"]) for p in queue if p.get("status") != "published"}
+
+    media = sorted(f for f in MEDIA_DIR.glob("*") if f.suffix.lower() in MEDIA_EXT | {".png", ".webp"})
+    if not media:
+        raise SystemExit("אין קבצים בתיקיית media/ – העלו תמונות/סרטונים של הקרקס כדי שהסוכן יוכל לתכנן פוסטים.")
+    used = {m for p in queue for m in p.get("media", [])}
+    # Prefer media that hasn't been posted yet; reuse old media only if needed.
+    fresh = [f for f in media if f.name not in used]
+    pool = (fresh + [f for f in media if f.name in used])[:12]
+
+    recent = [p["caption"] for p in reversed(queue) if p.get("status") == "published"]
+    posts = brain(cfg).plan_posts(pool, today.isoformat(), args.days, recent,
+                                  os.getenv("WEEKLY_BRIEF", ""))
+    auto = os.getenv("AUTO_APPROVE", "true").lower() == "true"
+    added = 0
+    for p in posts:
+        if str(p["date"]) in planned_dates or p["date"] < today.isoformat():
+            continue
+        if not all((MEDIA_DIR / m).exists() for m in p.get("media", [])):
+            log.warning("skip post with unknown media: %s", p.get("media"))
+            continue
+        queue.append({
+            "date": str(p["date"]), "time": p.get("time", "18:00"),
+            "media": p["media"], "caption": p["caption"], "idea": p.get("idea", ""),
+            "approved": auto, "status": "scheduled",
+        })
+        planned_dates.add(str(p["date"]))
+        added += 1
+    queue.sort(key=lambda p: (str(p["date"]), str(p.get("time", ""))))
+    save_queue(queue)
+    print(f"נוספו {added} פוסטים לתור (approved={auto}).")
+
+
+# ---------------------------------------------------------------- publish
+def cmd_publish(cfg: Config, _args) -> None:
+    ig = ig_client(cfg)
+    queue = load_queue()
+    t = now(cfg)
+    stamp = t.strftime("%Y-%m-%d %H:%M")
+    done = 0
+    for p in queue:
+        if p.get("status") == "published" or not p.get("approved"):
+            continue
+        if f"{p['date']} {p.get('time', '00:00')}" > stamp:
+            continue
+        for m in p["media"]:
+            if not m.lower().endswith(tuple(MEDIA_EXT)):
+                raise SystemExit(f"{m}: אינסטגרם מקבל רק JPG לתמונות ו-MP4 לסרטונים")
+        urls = [f"{cfg.media_base_url}/{m}" for m in p["media"]]
+        try:
+            ig_id = ig.publish(urls, p["caption"], ai_generated=bool(p.get("ai_generated")))
+        except InstagramError as e:
+            log.error("publish failed for %s: %s", p["date"], e)
+            p["last_error"] = str(e)[:300]
+            continue
+        if cfg.dry_run:
+            print(f"[DRY_RUN] היה מתפרסם: {p['date']} {p['media']}")
+            continue
+        p.update(status="published", ig_id=ig_id, published_at=t.isoformat(timespec="minutes"))
+        p.pop("last_error", None)
+        done += 1
+        print(f"פורסם: {p['date']} -> {ig_id}")
+    save_queue(queue)
+    if done == 0:
+        print("אין פוסט שמגיע לפרסום כרגע.")
+
+
+# ---------------------------------------------------------------- reply
+def open_issue(cfg: Config, title: str, body: str) -> None:
+    if not cfg.github_token:
+        log.warning("ESCALATION (no GITHUB_TOKEN): %s\n%s", title, body)
+        return
+    r = requests.post(
+        f"https://api.github.com/repos/{cfg.github_repo}/issues",
+        headers={"Authorization": f"Bearer {cfg.github_token}", "Accept": "application/vnd.github+json"},
+        json={"title": title, "body": body}, timeout=30)
+    if r.status_code >= 300:
+        log.warning("could not open issue: %s %s", r.status_code, r.text[:200])
+
+
+def cmd_reply(cfg: Config, _args) -> None:
+    ig = ig_client(cfg)
+    me = ig.me()
+    my_name = me.get("username", "")
+    handled: list[str] = load_state("handled", [])
+    seen = set(handled)
+    b = brain(cfg)
+    stats = {"reply": 0, "escalate": 0, "hide": 0, "ignore": 0}
+
+    def act(key: str, kind: str, text: str, user: str, do_reply, do_hide=None, **ctx):
+        d = b.decide_reply(kind, text, user, **ctx)
+        action = d.get("action", "escalate")
+        stats[action] = stats.get(action, 0) + 1
+        reply = (d.get("reply") or "").strip()
+        log.info("%s @%s: %r -> %s %r", kind, user, text[:80], action, reply[:80])
+        if action in {"reply", "escalate"} and reply:
+            do_reply(reply)
+        if action == "hide" and do_hide:
+            do_hide()
+        if action == "escalate":
+            open_issue(cfg, f"[אינסטגרם] פנייה שדורשת טיפול – @{user}",
+                       f"**סוג:** {kind}\n**משתמש:** @{user}\n**הודעה:**\n> {text}\n\n"
+                       f"**סיבה:** {d.get('reason', '')}\n**נענה אוטומטית:** {reply or '—'}\n"
+                       f"{ctx.get('link', '')}")
+        if not cfg.dry_run:
+            seen.add(key)
+            handled.append(key)
+
+    # comments on recent posts
+    for media in ig.recent_media(limit=10):
+        for c in ig.comments(media["id"]):
+            key = f"c:{c['id']}"
+            if key in seen or c.get("username") == my_name:
+                continue
+            if any(r.get("username") == my_name for r in c.get("replies", {}).get("data", [])):
+                continue  # already answered manually
+            act(key, "תגובה לפוסט", c.get("text", ""), c.get("username", "?"),
+                lambda txt, cid=c["id"], u=c.get("username", ""): ig.reply_comment(cid, f"@{u} {txt}"),
+                lambda cid=c["id"]: ig.hide_comment(cid),
+                post_caption=media.get("caption", ""), link=media.get("permalink", ""))
+
+    # direct messages (only inside Instagram's 24h reply window)
+    if cfg.enable_dms:
+        cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=23)
+        for conv in ig.conversations():
+            msgs = conv.get("messages", {}).get("data", [])
+            if not msgs:
+                continue
+            last = msgs[0]  # newest first
+            sender = last.get("from", {})
+            if sender.get("username") == my_name or f"m:{last['id']}" in seen:
+                continue
+            created = dt.datetime.fromisoformat(last["created_time"].replace("+0000", "+00:00"))
+            if created < cutoff:
+                continue
+            thread = [f"{m.get('from', {}).get('username')}: {m.get('message', '')}" for m in reversed(msgs)]
+            act(f"m:{last['id']}", "הודעה פרטית", last.get("message", ""), sender.get("username", "?"),
+                lambda txt, rid=sender.get("id"): ig.send_dm(rid, txt), thread=thread)
+
+    save_state("handled", handled[-5000:])
+    print("סיכום:", stats, "(DRY_RUN)" if cfg.dry_run else "")
+
+
+# ---------------------------------------------------------------- refresh
+def cmd_refresh(cfg: Config, _args) -> None:
+    data = ig_client(cfg).refresh_token()
+    days = int(data.get("expires_in", 0)) // 86400
+    out = os.getenv("GITHUB_OUTPUT")
+    if out:
+        print(f"::add-mask::{data['access_token']}")
+        with open(out, "a") as f:
+            f.write(f"token={data['access_token']}\n")
+    print(f"הטוקן חודש, בתוקף לעוד {days} ימים.")
+
+
+def main(argv=None) -> None:
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+    ap = argparse.ArgumentParser(prog="agent")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("check")
+    p = sub.add_parser("plan")
+    p.add_argument("--days", type=int, default=7)
+    sub.add_parser("publish")
+    sub.add_parser("reply")
+    sub.add_parser("refresh")
+    args = ap.parse_args(argv)
+    cfg = Config.load()
+    {"check": cmd_check, "plan": cmd_plan, "publish": cmd_publish,
+     "reply": cmd_reply, "refresh": cmd_refresh}[args.cmd](cfg, args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
