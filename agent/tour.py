@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 TOUR_FILE = ROOT / "content" / "tour.yaml"
 POSTER_DIR = MEDIA_DIR / "tour"
 FONTS_DIR = ROOT / "brand" / "fonts"
-DEFAULT_LINK = "https://www.kupat.co.il/Bravo_Circus"
+DEFAULT_LINK = "https://tickets.kupat.co.il/booking/features/3013?display=list"
 WEEKDAYS = ["שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת", "ראשון"]  # Monday=0
 
 FONT_CANDIDATES = [

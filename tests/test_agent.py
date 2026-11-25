@@ -19,6 +19,8 @@ def repo(tmp_path, monkeypatch):
     monkeypatch.setattr(store, "STATE_DIR", tmp_path / "state")
     monkeypatch.setattr(m, "load_queue", lambda: store.load_queue(q))
     monkeypatch.setattr(m, "save_queue", lambda p: store.save_queue(p, q))
+    from agent import tour
+    monkeypatch.setattr(tour, "TOUR_FILE", tmp_path / "no-tour.yaml")
     monkeypatch.setenv("DRY_RUN", "false")
     monkeypatch.setenv("IG_USER_ID", "1"); monkeypatch.setenv("IG_ACCESS_TOKEN", "t")
     monkeypatch.setenv("ANTHROPIC_API_KEY", "k")
