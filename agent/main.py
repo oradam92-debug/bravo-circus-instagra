@@ -55,8 +55,9 @@ def cmd_plan(cfg: Config, args) -> None:
     today = now(cfg).date()
     planned_dates = {str(p["date"]) for p in queue if p.get("status") != "published"}
     # Days before a show belong to the "מחר אנחנו מגיעים" tour post – keep them free.
-    from .tour import load_tour
-    for s in load_tour().get("shows") or []:
+    from .tour import load_tour, summary
+    tour = load_tour()
+    for s in tour.get("shows") or []:
         try:
             planned_dates.add((dt.date.fromisoformat(str(s["date"])) - dt.timedelta(days=1)).isoformat())
         except (KeyError, ValueError):
@@ -75,7 +76,8 @@ def cmd_plan(cfg: Config, args) -> None:
     recent = [p["caption"] for p in reversed(queue) if p.get("status") == "published"]
     upcoming = sorted(d for d in planned_dates if d >= today.isoformat())
     posts = brain(cfg).plan_posts(pool, today.isoformat(), args.days, recent,
-                                  os.getenv("WEEKLY_BRIEF", ""), ai_images=ai, skip_dates=upcoming)
+                                  os.getenv("WEEKLY_BRIEF", ""), ai_images=ai, skip_dates=upcoming,
+                                  tour=summary(tour, today))
     auto = os.getenv("AUTO_APPROVE", "true").lower() == "true"
     added = 0
     for p in posts:

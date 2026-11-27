@@ -43,7 +43,7 @@ class FakeIG:
 
 
 class FakeBrain:
-    def plan_posts(self, files, today, days, recent, brief, ai_images=False, skip_dates=None):
+    def plan_posts(self, files, today, days, recent, brief, ai_images=False, skip_dates=None, tour=""):
         if ai_images:
             d = dt.date.fromisoformat(today)
             return [{"date": str(d + dt.timedelta(days=i)), "time": "00:00", "media": [],
@@ -145,3 +145,17 @@ def test_kupat_merge_keeps_posters(tmp_path):
     kupat.save_tour(merged, p)
     txt = p.read_text(encoding="utf-8")
     assert txt.startswith("# header") and yaml.safe_load(txt)["shows"][1]["link"] == "L2"
+
+
+def test_tour_summary_groups_by_city():
+    from agent import tour as T
+    sched = {"shows": [
+        {"date": "2026-12-03", "time": "18:30", "city": "ראש העין", "venue": "היכל"},
+        {"date": "2026-12-03", "time": "16:30", "city": "ראש העין", "venue": "היכל"},
+        {"date": "2026-12-12", "city": "תל אביב"},
+        {"date": "2026-11-01", "time": "10:00", "city": "עבר"},
+    ]}
+    out = T.summary(sched, dt.date(2026, 11, 27))
+    assert "ראש העין – היכל, 16:30 | 18:30" in out
+    assert "תל אביב, שעה לא ידועה" in out
+    assert "עבר" not in out
