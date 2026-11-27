@@ -61,6 +61,17 @@ def stops_for(date: dt.date, tour: dict) -> list[dict]:
     return list(stops.values())
 
 
+def summary(tour: dict, start: dt.date, days: int = 45) -> str:
+    """Upcoming shows as short Hebrew lines (one per city per day) for the content planner."""
+    lines = []
+    for i in range(days + 1):
+        for st in stops_for(start + dt.timedelta(days=i), tour):
+            times = " | ".join(st["times"]) or "שעה לא ידועה"
+            venue = f" – {st['venue']}" if st.get("venue") else ""
+            lines.append(f"{st['date']} ({he_date(st['date'])}): {st['city']}{venue}, {times}")
+    return "\n".join(lines)
+
+
 def he_date(iso: str) -> str:
     d = dt.date.fromisoformat(iso)
     return f"יום {WEEKDAYS[d.weekday()]}, {d.day}.{d.month}"
