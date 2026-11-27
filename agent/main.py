@@ -116,6 +116,7 @@ def cmd_publish(cfg: Config, _args) -> None:
     t = now(cfg)
     stamp = t.strftime("%Y-%m-%d %H:%M")
     done = 0
+    published: list[str] = []
     for p in queue:
         if p.get("status") == "published" or not p.get("approved"):
             continue
@@ -149,8 +150,12 @@ def cmd_publish(cfg: Config, _args) -> None:
             except InstagramError as e:
                 log.warning("facebook cross-post failed for %s: %s", p["date"], e)
         done += 1
+        where = ["פיד אינסטגרם"] + (["סטורי"] if p.get("story_id") else []) + (["פייסבוק"] if p.get("fb_id") else [])
+        published.append(f"📸 **פורסם** ({' + '.join(where)}) – {p.get('idea') or p['media'][0]}\n\n> " +
+                         p["caption"][:600].replace("\n", "\n> "))
         print(f"פורסם: {p['date']} -> {ig_id}")
     save_queue(queue)
+    notify(cfg, published)
     if done == 0:
         print("אין פוסט שמגיע לפרסום כרגע.")
 
@@ -168,6 +173,34 @@ def open_issue(cfg: Config, title: str, body: str) -> None:
         log.warning("could not open issue: %s %s", r.status_code, r.text[:200])
 
 
+ACTIVITY_TITLE = "📣 יומן פעילות הסוכן"
+
+
+def notify(cfg: Config, lines: list[str]) -> None:
+    """Post one comment per run on the activity-log issue (GitHub emails/pushes it to the owner)."""
+    if not lines or cfg.dry_run:
+        return
+    if not cfg.github_token:
+        log.info("ACTIVITY:\n%s", "\n".join(lines))
+        return
+    h = {"Authorization": f"Bearer {cfg.github_token}", "Accept": "application/vnd.github+json"}
+    api = f"https://api.github.com/repos/{cfg.github_repo}"
+    try:
+        issues = requests.get(f"{api}/issues", headers=h, timeout=30,
+                              params={"state": "open", "per_page": 100}).json()
+        num = next((i["number"] for i in issues if i.get("title") == ACTIVITY_TITLE), None)
+        if num is None:
+            num = requests.post(f"{api}/issues", headers=h, timeout=30, json={
+                "title": ACTIVITY_TITLE,
+                "body": "כאן הסוכן מדווח על כל פרסום ועל כל תשובה ללקוחות. כל עדכון מגיע אליך במייל ובאפליקציית GitHub."
+            }).json()["number"]
+        owner = cfg.github_repo.split("/")[0]
+        body = f"@{owner}\n\n" + "\n".join(lines)
+        requests.post(f"{api}/issues/{num}/comments", headers=h, timeout=30, json={"body": body[:65000]})
+    except Exception as e:  # notifications must never break the agent
+        log.warning("notify failed: %s", e)
+
+
 def cmd_reply(cfg: Config, _args) -> None:
     ig = ig_client(cfg)
     me = ig.me()
@@ -176,6 +209,8 @@ def cmd_reply(cfg: Config, _args) -> None:
     seen = set(handled)
     b = brain(cfg)
     stats = {"reply": 0, "escalate": 0, "hide": 0, "ignore": 0}
+    activity: list[str] = []
+    icons = {"reply": "💬", "escalate": "⚠️", "hide": "🙈"}
 
     def act(key: str, kind: str, text: str, user: str, do_reply, do_hide=None, **ctx):
         d = b.decide_reply(kind, text, user, **ctx)
@@ -187,6 +222,11 @@ def cmd_reply(cfg: Config, _args) -> None:
             do_reply(reply)
         if action == "hide" and do_hide:
             do_hide()
+        if action in icons:
+            what = {"reply": "ענה", "escalate": "הועבר לטיפולך (ונענה בנימוס)", "hide": "הוסתר (ספאם)"}[action]
+            activity.append(f"{icons[action]} **{kind}** מ-@{user}: \"{text[:200]}\"\n   ↳ {what}" +
+                            (f": {reply}" if reply and action != "hide" else "") +
+                            (f" ([לפוסט]({ctx['link']}))" if ctx.get("link") else ""))
         if action == "escalate":
             open_issue(cfg, f"[אינסטגרם] פנייה שדורשת טיפול – @{user}",
                        f"**סוג:** {kind}\n**משתמש:** @{user}\n**הודעה:**\n> {text}\n\n"
@@ -249,6 +289,8 @@ def cmd_reply(cfg: Config, _args) -> None:
                 lambda txt, rid=sender.get("id"): ig.send_dm(rid, txt), thread=thread)
 
     save_state("handled", handled[-5000:])
+    if activity:
+        notify(cfg, ["### תגובות שטופלו", *activity])
     print("סיכום:", stats, "(DRY_RUN)" if cfg.dry_run else "")
 
 
