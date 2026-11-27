@@ -51,6 +51,7 @@ def stops_for(date: dt.date, tour: dict) -> list[dict]:
             "date": date.isoformat(), "city": city, "venue": s.get("venue", ""),
             "times": [], "link": s.get("link") or tour.get("default_link") or DEFAULT_LINK,
             "poster": s.get("poster"), "note": s.get("note", ""),
+            "no_tickets": bool(s.get("no_tickets")),
         })
         if s.get("time"):
             stop["times"].append(str(s["time"]))
@@ -68,7 +69,8 @@ def summary(tour: dict, start: dt.date, days: int = 45) -> str:
         for st in stops_for(start + dt.timedelta(days=i), tour):
             times = " | ".join(st["times"]) or "שעה לא ידועה"
             venue = f" – {st['venue']}" if st.get("venue") else ""
-            lines.append(f"{st['date']} ({he_date(st['date'])}): {st['city']}{venue}, {times}")
+            extra = " (אין מכירת כרטיסים)" if st.get("no_tickets") else ""
+            lines.append(f"{st['date']} ({he_date(st['date'])}): {st['city']}{venue}, {times}{extra}")
     return "\n".join(lines)
 
 
@@ -88,11 +90,11 @@ def fallback_caption(stop: dict) -> str:
     ]
     if stop.get("venue"):
         lines.append(f"📍 {stop['venue']}")
-    lines += [
-        "",
+    lines += [""] + ([] if stop.get("no_tickets") else [
         "🎟️ כרטיסים בקופת תל אביב (קישור בביו):",
         stop["link"],
         "",
+    ]) + [
         "מחכים לכם! 🎉",
         "",
         "#קרקסבראבו #קרקסהחלומות #חנוכה #מופעלילדים #בילוילדים #קרקס "

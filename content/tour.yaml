@@ -79,6 +79,7 @@ shows:
   poster: posters/shaar-hanegev.jpg
   note: מופע חדש!
   manual: true
+  no_tickets: true
 - date: '2026-12-05'
   time: '11:00'
   city: גן שמואל

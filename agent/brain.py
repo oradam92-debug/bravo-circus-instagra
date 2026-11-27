@@ -136,16 +136,16 @@ class Brain:
 שעות: {', '.join(stop['times']) or 'לא צוין'}
 אולם: {stop.get('venue') or 'לא צוין'}
 {('הערה: ' + stop['note']) if stop.get('note') else ''}
-קישור לכרטיסים בקופת תל אביב: {stop['link']}
+{'אין מכירת כרטיסים להופעה הזו.' if stop.get('no_tickets') else 'קישור לכרטיסים בקופת תל אביב: ' + stop['link']}
 
 חובה:
 - לפתוח ב"מחר אנחנו מגיעים ל{stop['city']}!" (אפשר עם אימוג'ים).
 - לציין תאריך, שעות ואולם בדיוק כפי שנמסרו.
-- לכתוב "כרטיסים בקופת תל אביב – קישור בביו" ולהדביק את הקישור המלא בשורה נפרדת.
+{'- לא להזכיר כרטיסים, קופה, מחירים או קישור בביו.' if stop.get('no_tickets') else '- לכתוב "כרטיסים בקופת תל אביב – קישור בביו" ולהדביק את הקישור המלא בשורה נפרדת.'}
 - 5-10 האשטגים בסוף, כולל עם שם העיר.
 החזר רק את טקסט הפוסט, בלי הסברים."""
         text = self._ask(system, prompt, max_tokens=1200).strip()
-        if stop["link"] not in text:
+        if not stop.get("no_tickets") and stop["link"] not in text:
             text += f"\n\n🎟️ כרטיסים בקופת תל אביב:\n{stop['link']}"
         return text
 

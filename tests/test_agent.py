@@ -169,3 +169,14 @@ def test_art_poster_and_insta_fit(tmp_path):
     fitted = T.insta_fit(art, tmp_path / "f.jpg")
     assert Image.open(fitted).size == (1080, 1350)
     assert T.pick_art(stop, {"poster_art": []}) is None
+
+
+def test_no_tickets_caption_has_no_kupat():
+    import datetime as dt
+    from agent import tour as T
+    sched = {"shows": [{"date": "2026-12-04", "time": "13:00", "city": "שער הנגב",
+                        "venue": "אולם דורות", "no_tickets": True}]}
+    st = T.stops_for(dt.date(2026, 12, 4), sched)[0]
+    cap = T.fallback_caption(st)
+    assert "קופת" not in cap and "kupat" not in cap and "13:00" in cap
+    assert "אין מכירת כרטיסים" in T.summary(sched, dt.date(2026, 12, 1))
