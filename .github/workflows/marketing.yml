@@ -4,7 +4,7 @@ on:
     inputs:
       campaign:
         description: "שם הקמפיין (תיקייה ב-campaigns/)"
-        default: "hawaii-park"
+        default: "wipark"
       brief:
         description: "הנחיות נוספות לסוכן (לא חובה)"
         default: ""

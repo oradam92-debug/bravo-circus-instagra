@@ -173,7 +173,7 @@ def test_decide_reply_accepts_extra_context():
 
 # ---------------------------------------------------------------- marketing agent
 def _mk_brief():
-    return {"name": "הוואי פארק", "location": {"venue": "אושילנד כפר סבא", "address": "[להשלים]"},
+    return {"name": "WIPARK", "location": {"venue": "אושילנד כפר סבא", "address": "[להשלים]"},
             "season": {"start": "2027-02-15", "end": "2027-06-11", "teaser_start": "2027-02-01"},
             "product": {"ticket_price": "[להשלים]", "ages": "2-12"}}
 

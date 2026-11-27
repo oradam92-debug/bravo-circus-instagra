@@ -1,6 +1,6 @@
 """Marketing-plan agent – builds a full seasonal campaign for a product.
 
-  python -m agent.main marketing --campaign hawaii-park [--brief "..."] [--visuals]
+  python -m agent.main marketing --campaign wipark [--brief "..."] [--visuals]
 
 Reads   campaigns/<campaign>/brief.yaml   (facts; "[להשלים]" = unknown, never invented)
 Writes  campaigns/<campaign>/plan.json            raw plan (the source of truth for the others)
@@ -61,7 +61,7 @@ def campaign_dir(campaign: str) -> Path:
 def load_brief(campaign: str) -> dict:
     p = campaign_dir(campaign) / "brief.yaml"
     if not p.exists():
-        raise SystemExit(f"Missing {p} – create a brief first (see campaigns/hawaii-park/brief.yaml)")
+        raise SystemExit(f"Missing {p} – create a brief first (see campaigns/wipark/brief.yaml)")
     return yaml.safe_load(p.read_text(encoding="utf-8")) or {}
 
 
@@ -317,6 +317,7 @@ def render_style_board(plan: dict, brief: dict) -> str:
         f'<h3>{e(k.get("headline", ""))}</h3><p>{e(k.get("name", ""))}</p></div>'
         for i, k in enumerate(gl.get("key_visuals") or []))
     bi = plan.get("big_idea") or {}
+    sample = bi.get("tagline") or brief.get("name", "")
     mascot = gl.get("mascot") or {}
     return f"""<!doctype html>
 <html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -365,7 +366,7 @@ section{{margin:40px 0}}
 <main>
 <section><h2>הקונספט</h2><p>{e(gl.get('concept', ''))}</p></section>
 <section><h2>פלטת צבעים</h2><div class="grid">{swatches}</div></section>
-<section><h2>טיפוגרפיה</h2><div class="type">{''.join(f'<div><h3 style="font-family:{chr(39)}{e(f)}{chr(39)}">{e(f)}</h3><p style="font-family:{chr(39)}{e(f)}{chr(39)};font-size:22px">אלוהה! בואו לגלות את הקיץ</p></div>' for f in fonts)}</div></section>
+<section><h2>טיפוגרפיה</h2><div class="type">{''.join(f'<div><h3 style="font-family:{chr(39)}{e(f)}{chr(39)}">{e(f)}</h3><p style="font-family:{chr(39)}{e(f)}{chr(39)};font-size:22px">{e(sample)}</p></div>' for f in fonts)}</div></section>
 <section><h2>ציר העונה</h2><div class="tlwrap"><div class="tl">{pins}{phases}</div></div><ul class="legend">{legend}</ul></section>
 <section><h2>קי-ויז'ואלים</h2><div class="kvs">{kvs}</div></section>
 <section class="two"><div class="card"><h2>מוטיבים</h2><ul>{motifs}</ul></div>

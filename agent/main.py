@@ -7,7 +7,7 @@
   python -m agent.main tour       # queue "מחר אנחנו מגיעים ל..." posts (poster + Kupat link) from content/tour.yaml
   python -m agent.main sync       # update content/tour.yaml from the Kupat Tel Aviv site
   python -m agent.main refresh    # extend the Instagram token by 60 days
-  python -m agent.main marketing --campaign hawaii-park [--visuals] [--rerender]
+  python -m agent.main marketing --campaign wipark [--visuals] [--rerender]
                                   # marketing agent: full season plan + graphic language (campaigns/<name>/)
 """
 from __future__ import annotations
@@ -417,7 +417,7 @@ def main(argv=None) -> None:
     sub.add_parser("sync")
     sub.add_parser("refresh")
     mk = sub.add_parser("marketing")
-    mk.add_argument("--campaign", default="hawaii-park")
+    mk.add_argument("--campaign", default="wipark")
     mk.add_argument("--brief", default="", help="הנחיות נוספות לסוכן")
     mk.add_argument("--visuals", action="store_true", help="לייצר קי-ויז'ואלים ב-AI (OPENAI_API_KEY)")
     mk.add_argument("--rerender", action="store_true", help="לבנות מחדש את הקבצים מ-plan.json בלי לקרוא למודל")
