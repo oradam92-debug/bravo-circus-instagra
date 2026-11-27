@@ -156,3 +156,16 @@ def test_tour_summary_groups_by_city():
     assert "ראש העין – היכל, 16:30 | 18:30" in out
     assert "תל אביב, שעה לא ידועה" in out
     assert "עבר" not in out
+
+
+def test_art_poster_and_insta_fit(tmp_path):
+    from PIL import Image
+    from agent import tour as T
+    art = tmp_path / "art.jpg"
+    Image.new("RGB", (1003, 1568), (60, 20, 90)).save(art)
+    stop = {"date": "2026-12-01", "city": "חיפה", "times": ["16:30"], "venue": "אודיטוריום חיפה"}
+    out = T.make_art_poster(stop, tmp_path / "p.jpg", art)
+    assert Image.open(out).size == (1080, 1350)
+    fitted = T.insta_fit(art, tmp_path / "f.jpg")
+    assert Image.open(fitted).size == (1080, 1350)
+    assert T.pick_art(stop, {"poster_art": []}) is None

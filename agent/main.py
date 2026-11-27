@@ -253,6 +253,11 @@ def cmd_tour(cfg: Config, args) -> None:
             else:
                 media = []
             ai_bg = False
+            art = T.pick_art(stop, schedule) if not media else None
+            if art:
+                out = T.POSTER_DIR / f"{T.slug(stop)}.jpg"
+                T.make_art_poster(stop, out, art)
+                media = [str(out.relative_to(MEDIA_DIR))]
             if not media:
                 out = T.POSTER_DIR / f"{T.slug(stop)}.jpg"
                 bg = base

@@ -269,6 +269,81 @@ def make_poster(stop: dict, out: Path, base: Path | None = None) -> Path:
     return out
 
 
+def make_art_poster(stop: dict, out: Path, art: Path) -> Path:
+    """1080x1350 poster from the show's official artwork: keeps the art and the
+    "קרקס החלומות" title, and replaces the bottom banner with this stop's details."""
+    from PIL import Image, ImageDraw, ImageFilter, ImageOps
+    W, H = 1080, 1350
+    img = Image.open(art).convert("RGB")
+    img = ImageOps.contain(img, (W, 10_000), Image.LANCZOS) if img.width != W else img
+    img = img.crop((0, 0, W, H)) if img.height >= H else ImageOps.fit(img, (W, H), Image.LANCZOS)
+    img = img.convert("RGBA")
+
+    gold, light, dark = (255, 208, 80), (255, 244, 214), (40, 6, 60)
+    top = 978
+    # Soft dark fade into the banner so the cut is invisible.
+    fade = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    fd = ImageDraw.Draw(fade)
+    for y in range(top - 90, H):
+        a = int(235 * min(1, (y - (top - 90)) / 90))
+        fd.line([(0, y), (W, y)], fill=(18, 2, 34, a))
+    img = Image.alpha_composite(img, fade)
+
+    # Purple ribbon banner with a gold frame, like the original posters.
+    banner = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    bd = ImageDraw.Draw(banner)
+    x0, x1, y0, y1 = 40, W - 40, top + 6, H - 18
+    for y in range(y0, y1):
+        k = (y - y0) / (y1 - y0)
+        c = tuple(int(a + (b - a) * k) for a, b in zip((112, 40, 150), (62, 14, 96)))
+        bd.line([(x0, y), (x1, y)], fill=c + (255,))
+    mask = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([x0, y0, x1, y1], radius=34, fill=255)
+    banner.putalpha(mask)
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).rounded_rectangle([x0 - 6, y0 - 6, x1 + 6, y1 + 6], radius=40,
+                                           outline=(255, 190, 60, 200), width=10)
+    img = Image.alpha_composite(img, glow.filter(ImageFilter.GaussianBlur(8)))
+    img = Image.alpha_composite(img, banner)
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=34, outline=gold, width=5)
+    d.rounded_rectangle([x0 + 12, y0 + 12, x1 - 12, y1 - 12], radius=26, outline=(255, 208, 80, 140), width=2)
+    star = _font(44)
+    for sx in (x0 + 52, x1 - 52):
+        _centered_at(d, sx, y0 + 28, "★", star, gold)
+
+    y = y0 + 30
+    y = _centered(d, y, "מחר אנחנו מגיעים", _font(44), light, W, stroke=2, stroke_fill=dark) + 18
+    title = f"ל{stop['city']}!"
+    y = _centered(d, y, title, _fit(d, title, x1 - x0 - 150, 88), gold, W, stroke=4, stroke_fill=dark) + 28
+    line = he_date(stop["date"]) + (f"  |  {'  ·  '.join(stop['times'])}" if stop["times"] else "")
+    y = _centered(d, y, line, _fit(d, line, x1 - x0 - 70, 42), light, W, stroke=2, stroke_fill=dark) + 20
+    if stop.get("venue"):
+        _centered(d, y, stop["venue"], _fit(d, stop["venue"], x1 - x0 - 90, 32), (236, 214, 255), W)
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    img.convert("RGB").save(out, "JPEG", quality=93)
+    return out
+
+
+def _centered_at(draw, cx: float, y: int, text: str, font: "_Font", fill) -> None:
+    t = _rtl(text)
+    x = cx - font.width(draw, t) / 2
+    top = font.main.getbbox("אבג", anchor="ls")[1]
+    for run, f in font.runs(t):
+        draw.text((x, y - top), run, font=f, fill=fill, anchor="ls")
+        x += draw.textlength(run, font=f)
+
+
+def pick_art(stop: dict, schedule: dict) -> Path | None:
+    """Official artwork for auto posters (tour.yaml: poster_art), rotated by city."""
+    import hashlib
+    arts = [MEDIA_DIR / a for a in schedule.get("poster_art") or [] if (MEDIA_DIR / a).exists()]
+    if not arts:
+        return None
+    return arts[int(hashlib.md5(stop["city"].encode()).hexdigest(), 16) % len(arts)]
+
+
 def insta_fit(src: Path, out: Path) -> Path:
     """Instagram feed accepts 4:5 to 1.91:1. Taller/wider posters are not cropped –
     they're placed on a blurred, darkened copy of themselves at 4:5 (1080x1350)."""

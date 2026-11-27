@@ -15,6 +15,10 @@
 # מתעדכן אוטומטית כל בוקר מאתר קופת תל אביב (python -m agent.main sync).
 
 post_time: '10:00'
+poster_art:
+- posters/shaar-hanegev.jpg
+- posters/givat-brenner.jpg
+- posters/rosh-haayin.jpg
 default_link: https://tickets.kupat.co.il/booking/features/3013?display=list
 shows:
 - date: '2026-11-28'
