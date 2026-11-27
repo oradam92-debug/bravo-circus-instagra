@@ -55,7 +55,7 @@ def cmd_plan(cfg: Config, args) -> None:
     today = now(cfg).date()
     # Every day gets its own general post (evening) – in addition to the morning
     # "מחר אנחנו מגיעים" tour post. Only days that already have a general post are skipped.
-    planned_dates = {str(p["date"]) for p in queue if not p.get("tour_key")}
+    planned_dates = {str(p["date"]) for p in queue if not p.get("tour_key") and not p.get("reel_key")}
     from .tour import load_tour, summary
     tour = load_tour()
 
