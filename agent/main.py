@@ -17,6 +17,7 @@ import os
 import sys
 from zoneinfo import ZoneInfo
 
+import re
 import requests
 
 from .config import MEDIA_DIR, Config
@@ -173,12 +174,20 @@ def open_issue(cfg: Config, title: str, body: str) -> None:
     r = requests.post(
         f"https://api.github.com/repos/{cfg.github_repo}/issues",
         headers={"Authorization": f"Bearer {cfg.github_token}", "Accept": "application/vnd.github+json"},
-        json={"title": title, "body": body}, timeout=30)
+        json={"title": defang(title), "body": defang(body)}, timeout=30)
     if r.status_code >= 300:
         log.warning("could not open issue: %s %s", r.status_code, r.text[:200])
 
 
 ACTIVITY_TITLE = "📣 יומן פעילות הסוכן"
+
+
+_MENTION = re.compile(r"(?<![`\w])@([A-Za-z0-9_.\-]+)")
+
+
+def defang(text: str) -> str:
+    """Instagram/Facebook usernames must never ping GitHub users: wrap every @handle in backticks."""
+    return _MENTION.sub(lambda m: f"`@{m.group(1)}`", text or "")
 
 
 def notify(cfg: Config, lines: list[str]) -> None:
@@ -200,7 +209,7 @@ def notify(cfg: Config, lines: list[str]) -> None:
                 "body": "כאן הסוכן מדווח על כל פרסום ועל כל תשובה ללקוחות. כל עדכון מגיע אליך במייל ובאפליקציית GitHub."
             }).json()["number"]
         owner = cfg.github_repo.split("/")[0]
-        body = f"@{owner}\n\n" + "\n".join(lines)
+        body = f"@{owner}\n\n" + defang("\n".join(lines))
         requests.post(f"{api}/issues/{num}/comments", headers=h, timeout=30, json={"body": body[:65000]})
     except Exception as e:  # notifications must never break the agent
         log.warning("notify failed: %s", e)

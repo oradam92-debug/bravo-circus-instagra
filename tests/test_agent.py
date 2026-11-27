@@ -168,3 +168,9 @@ def test_decide_reply_accepts_extra_context():
     import inspect
     from agent.brain import Brain
     assert any(p.kind == p.VAR_KEYWORD for p in inspect.signature(Brain.decide_reply).parameters.values())
+
+
+def test_defang_never_pings_github_users():
+    from agent.main import defang
+    assert defang("תשובה ל-@dana ו@yossi.k") == "תשובה ל-`@dana` ו`@yossi.k`"
+    assert defang("כבר `@x`") == "כבר `@x`"
