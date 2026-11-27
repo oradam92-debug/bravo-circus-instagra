@@ -50,7 +50,7 @@ html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0d1638}
   // סדרת ההשקה (שלב 2) – ?s=launch
   const LAUNCH = {
     1: { photo: "launch-1.jpg", kicker: "",                        l1: "פתחנו!",     l2: "וואי פארק באושילנד" },
-    2: { photo: "launch-2.jpg", kicker: "פארק האקסטרים של ישראל", l1: "תוציאו",     l2: "את זה!" },
+    2: { photo: "launch-2.jpg", kicker: "פארק האקסטרים של ישראל", l1: "תוציאו",     l2: "את זה!", low: true },
     3: { photo: "launch-3.jpg", kicker: "",                        l1: "גם ההורים",  l2: "בפנים" },
     4: { photo: "../pano-feed.jpg", story: "../pano-story.jpg", kicker: "", l1: "מחכים לכם", l2: "באושילנד" },
   };
@@ -60,6 +60,8 @@ html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0d1638}
   document.body.className = f;
   document.getElementById("photo").src = "../brand/renders/" + series + "/" + (f === "story" && P.story ? P.story : P.photo);
   document.getElementById("kicker").textContent = P.kicker;
+  // low: headline sits above the logos instead of in the sky (when the subject fills the top)
+  if (P.low) document.body.style.setProperty("--headTop", f === "story" ? "1180px" : "760px");
   for (const k of ["1", "2"]) { document.getElementById("b" + k).textContent = P["l" + k]; document.getElementById("f" + k).textContent = P["l" + k]; }
   // shrink a line if it is wider than the frame
   document.fonts.ready.then(() => document.querySelectorAll(".line").forEach(l => {
