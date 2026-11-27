@@ -182,7 +182,7 @@ def open_issue(cfg: Config, title: str, body: str) -> None:
 ACTIVITY_TITLE = "📣 יומן פעילות הסוכן"
 
 
-_MENTION = re.compile(r"(?<![`\w])@([A-Za-z0-9_.\-]+)")
+_MENTION = re.compile(r"(?<!`)@([A-Za-z0-9_.\-]+)")
 
 
 def defang(text: str) -> str:
