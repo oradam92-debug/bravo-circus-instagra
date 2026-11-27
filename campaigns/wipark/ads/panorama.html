@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="he" dir="rtl"><head><meta charset="utf-8">
 <title>WIPARK × אושילנד – פנורמה</title>
-<!-- מודעה: "וואי פארק מגיע לאושילנד" על צילום הפנורמה. ?f=feed (1080x1350) | story (1080x1920)
+<!-- מודעה: "וואי פארק מגיע לאושילנד" על צילום הפנורמה. ?f=feed (1080x1350) | story (1080x1920) | wide (1920x1080)
      אותו עיצוב כמו רכיב Epic Headline בפיגמה: Rubik Black, קו מתאר מנוגד, חילוץ תלת-ממדי בכחול-לילה. -->
 <style>
 @font-face{font-family:Rubik;font-weight:900;src:url(../brand/fonts/rubik-hebrew-900-normal.woff2) format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
@@ -10,6 +10,13 @@
 body.story{--h:1920px;--headTop:250px;--lockBottom:60px}
 body.story .photo{top:-150px;height:calc(100% + 150px)}
 body.story .bottom{height:15%;background:linear-gradient(rgba(8,13,33,0),rgba(8,13,33,.85) 55%,rgba(8,13,33,.97))}
+body.wide{--w:1920px;--h:1080px}
+body.wide .sky{width:52%;height:100%;right:auto;background:linear-gradient(90deg,rgba(8,20,51,.55),rgba(8,20,51,.25) 70%,rgba(8,20,51,0))}
+body.wide .bottom{display:none}
+body.wide .head{left:70px;right:auto;top:170px;width:900px}
+body.wide .l1{font-size:190px}
+body.wide .l2{font-size:142px}
+body.wide .lock{left:70px;right:auto;width:900px;bottom:150px}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0d1638}
 .ad{position:relative;width:var(--w);height:var(--h);overflow:hidden;font-family:Rubik,sans-serif}
@@ -48,5 +55,6 @@ html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0d1638}
   const f = new URLSearchParams(location.search).get("f") || "feed";
   document.body.className = f;
   if (f === "story") document.getElementById("photo").src = "../brand/renders/pano-story.jpg";
+  if (f === "wide") document.getElementById("photo").src = "../brand/renders/pano-wide.jpg";
 </script>
 </body></html>
