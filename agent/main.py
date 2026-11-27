@@ -67,7 +67,7 @@ def cmd_plan(cfg: Config, args) -> None:
     used = {m for p in queue for m in p.get("media", [])}
     # Prefer media that hasn't been posted yet; reuse old media only if needed.
     fresh = [f for f in media if f.name not in used]
-    pool = (fresh + ([] if ai else [f for f in media if f.name in used]))[:12]
+    pool = ([] if ai else (fresh + [f for f in media if f.name in used]))[:12]
 
     recent = [p["caption"] for p in reversed(queue) if p.get("status") == "published"]
     upcoming = sorted(d for d in planned_dates if d >= today.isoformat())
