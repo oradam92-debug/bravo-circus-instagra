@@ -109,7 +109,7 @@ class Brain:
 
     # ---------- replying ----------
     def decide_reply(self, kind: str, text: str, username: str, post_caption: str = "",
-                     thread: list[str] | None = None) -> dict:
+                     thread: list[str] | None = None, **_ignored) -> dict:
         system = (
             "אתה עונה בשם קרקס בראבו לאנשים באינסטגרם. ענה בעברית (או בשפה שבה פנו), "
             "בחום, בקצרה (1-3 משפטים), בלי להמציא מידע. אם התשובה לא במדריך – הפנה לאתר/לקופה "

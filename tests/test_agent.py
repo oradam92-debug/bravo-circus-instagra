@@ -159,3 +159,9 @@ def test_tour_summary_groups_by_city():
     assert "ראש העין – היכל, 16:30 | 18:30" in out
     assert "תל אביב, שעה לא ידועה" in out
     assert "עבר" not in out
+
+
+def test_decide_reply_accepts_extra_context():
+    import inspect
+    from agent.brain import Brain
+    assert any(p.kind == p.VAR_KEYWORD for p in inspect.signature(Brain.decide_reply).parameters.values())
