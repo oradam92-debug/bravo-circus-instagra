@@ -112,14 +112,61 @@ def ai_background_prompt(stop: dict) -> str:
 
 
 # ---------------------------------------------------------------- poster
-def _font(size: int):
+# Hebrew fonts often lack digits/symbols (Noto Sans Hebrew has no 0-9, ★, ·, |),
+# so every character the main font can't draw is drawn with a fallback font.
+FALLBACK_CANDIDATES = [
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf",
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+]
+
+
+def _load(paths: list[str], size: int):
     from PIL import ImageFont
-    custom = sorted(FONTS_DIR.glob("*.[ot]tf")) if FONTS_DIR.exists() else []
-    for path in [str(p) for p in custom] + FONT_CANDIDATES:
+    for path in paths:
         if Path(path).exists():
             # BASIC layout + python-bidi gives correct Hebrew on every machine (no libraqm needed).
             return ImageFont.truetype(path, size, layout_engine=ImageFont.Layout.BASIC)
-    return ImageFont.load_default(size)
+    return None
+
+
+class _Font:
+    """Main font + fallback for missing glyphs."""
+
+    def __init__(self, size: int):
+        from PIL import ImageFont
+        custom = sorted(FONTS_DIR.glob("*.[ot]tf")) if FONTS_DIR.exists() else []
+        self.main = _load([str(p) for p in custom] + FONT_CANDIDATES, size) or ImageFont.load_default(size)
+        self.fallback = _load(FALLBACK_CANDIDATES, size)
+        self._cache: dict[str, bool] = {}
+        try:
+            self._notdef = bytes(self.main.getmask("\uE000"))
+        except Exception:
+            self._notdef = None
+
+    def has(self, ch: str) -> bool:
+        if ch.isspace() or self._notdef is None or self.fallback is None:
+            return True
+        if ch not in self._cache:
+            self._cache[ch] = bytes(self.main.getmask(ch)) != self._notdef
+        return self._cache[ch]
+
+    def runs(self, text: str) -> list[tuple[str, object]]:
+        out: list[tuple[str, object]] = []
+        for ch in text:
+            f = self.main if self.has(ch) else self.fallback
+            if out and out[-1][1] is f:
+                out[-1] = (out[-1][0] + ch, f)
+            else:
+                out.append((ch, f))
+        return out
+
+    def width(self, draw, visual: str, stroke: int = 0) -> float:
+        return sum(draw.textlength(t, font=f) for t, f in self.runs(visual)) + 2 * stroke
+
+
+def _font(size: int) -> _Font:
+    return _Font(size)
 
 
 def _rtl(text: str) -> str:
@@ -127,22 +174,26 @@ def _rtl(text: str) -> str:
     return get_display(text)
 
 
-def _fit(draw, text: str, max_w: int, size: int, min_size: int = 28):
+def _fit(draw, text: str, max_w: int, size: int, min_size: int = 28) -> _Font:
     while size > min_size:
         f = _font(size)
-        if draw.textlength(_rtl(text), font=f) <= max_w:
+        if f.width(draw, _rtl(text)) <= max_w:
             return f
         size -= 4
     return _font(min_size)
 
 
-def _centered(draw, y: int, text: str, font, fill, width: int, stroke=0, stroke_fill=None) -> int:
+def _centered(draw, y: int, text: str, font: _Font, fill, width: int, stroke=0, stroke_fill=None) -> int:
     t = _rtl(text)
-    box = draw.textbbox((0, 0), t, font=font, stroke_width=stroke)
-    w, h = box[2] - box[0], box[3] - box[1]
-    draw.text(((width - w) / 2 - box[0], y - box[1]), t, font=font, fill=fill,
-              stroke_width=stroke, stroke_fill=stroke_fill)
-    return y + h
+    # Height from the main font so lines stay evenly spaced; all runs share one baseline.
+    top, bottom = font.main.getbbox("אבגדהלק", anchor="ls")[1], font.main.getbbox("אבגדהלק", anchor="ls")[3]
+    x = (width - font.width(draw, t, stroke)) / 2 + stroke
+    base = y - top + stroke
+    for run, f in font.runs(t):
+        draw.text((x, base), run, font=f, fill=fill, anchor="ls",
+                  stroke_width=stroke, stroke_fill=stroke_fill)
+        x += draw.textlength(run, font=f)
+    return y + (bottom - top) + 2 * stroke
 
 
 def _background(W: int, H: int, base: Path | None):
@@ -207,7 +258,7 @@ def make_poster(stop: dict, out: Path, base: Path | None = None) -> Path:
     # Call-to-action button
     cta = "כרטיסים בקופת תל אביב – קישור בביו"
     f = _fit(d, cta, W - 220, 42)
-    bw = d.textlength(_rtl(cta), font=f) + 90
+    bw = f.width(d, _rtl(cta)) + 90
     by = max(y + 10, H - 150)
     d.rounded_rectangle([(W - bw) / 2, by, (W + bw) / 2, by + 86], radius=43, fill=red,
                         outline=gold, width=4)
