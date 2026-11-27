@@ -60,6 +60,7 @@ def test_plan_then_publish(repo, monkeypatch):
     ig = FakeIG()
     monkeypatch.setattr(m, "brain", lambda cfg: FakeBrain())
     monkeypatch.setattr(m, "ig_client", lambda cfg: ig)
+    monkeypatch.setenv("GENERAL_POST_TIME", "00:00")
     cfg = m.Config.load()
     m.cmd_plan(cfg, SimpleNamespace(days=7))
     q = store.load_queue(repo)

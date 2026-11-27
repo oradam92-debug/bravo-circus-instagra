@@ -90,7 +90,7 @@ def fallback_caption(stop: dict) -> str:
         lines.append(f"📍 {stop['venue']}")
     lines += [
         "",
-        "🎟️ כרטיסים בקופת תל אביב (קישור בביו):",
+        "🎟️ כרטיסים בקופת תל אביב:",
         stop["link"],
         "",
         "מחכים לכם! 🎉",
@@ -205,7 +205,7 @@ def make_poster(stop: dict, out: Path, base: Path | None = None) -> Path:
         y = _centered(d, y, stop["venue"], _fit(d, stop["venue"], W - 120, 40), (235, 225, 255), W) + 30
 
     # Call-to-action button
-    cta = "כרטיסים בקופת תל אביב – קישור בביו"
+    cta = "כרטיסים בקופת תל אביב"
     f = _fit(d, cta, W - 220, 42)
     bw = d.textlength(_rtl(cta), font=f) + 90
     by = max(y + 10, H - 150)

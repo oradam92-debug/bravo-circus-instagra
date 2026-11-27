@@ -53,15 +53,11 @@ def cmd_check(cfg: Config, _args) -> None:
 def cmd_plan(cfg: Config, args) -> None:
     queue = load_queue()
     today = now(cfg).date()
-    planned_dates = {str(p["date"]) for p in queue if p.get("status") != "published"}
-    # Days before a show belong to the "מחר אנחנו מגיעים" tour post – keep them free.
+    # Every day gets its own general post (evening) – in addition to the morning
+    # "מחר אנחנו מגיעים" tour post. Only days that already have a general post are skipped.
+    planned_dates = {str(p["date"]) for p in queue if not p.get("tour_key")}
     from .tour import load_tour, summary
     tour = load_tour()
-    for s in tour.get("shows") or []:
-        try:
-            planned_dates.add((dt.date.fromisoformat(str(s["date"])) - dt.timedelta(days=1)).isoformat())
-        except (KeyError, ValueError):
-            pass
 
     from . import imagegen
     ai = imagegen.enabled()
@@ -98,7 +94,7 @@ def cmd_plan(cfg: Config, args) -> None:
             log.warning("skip post with missing media: %s", files)
             continue
         item = {
-            "date": date, "time": p.get("time", "18:00"),
+            "date": date, "time": os.getenv("GENERAL_POST_TIME", "19:00"),
             "media": files, "caption": p["caption"], "idea": p.get("idea", ""),
             "approved": auto, "status": "scheduled",
         }
