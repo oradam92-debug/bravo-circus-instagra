@@ -22,6 +22,8 @@ def repo(tmp_path, monkeypatch):
     from agent import tour
     monkeypatch.setattr(tour, "TOUR_FILE", tmp_path / "no-tour.yaml")
     monkeypatch.setenv("DRY_RUN", "false")
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)   # never touch the real repo from tests
+    monkeypatch.setattr(m, "notify", lambda cfg, lines: None)
     monkeypatch.setenv("IG_USER_ID", "1"); monkeypatch.setenv("IG_ACCESS_TOKEN", "t")
     monkeypatch.setenv("ANTHROPIC_API_KEY", "k")
     return q

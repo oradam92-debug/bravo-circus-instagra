@@ -53,7 +53,7 @@ class Config:
                 f"https://raw.githubusercontent.com/{repo}/{branch}/media",
             ).rstrip("/"),
             github_repo=repo,
-            github_token=os.getenv("GITHUB_TOKEN", ""),
+            github_token=os.getenv("GITHUB_TOKEN", "") if os.getenv("GITHUB_ACTIONS") == "true" else "",
             timezone=os.getenv("TIMEZONE", "Asia/Jerusalem"),
             graph_host=os.getenv("GRAPH_HOST", "graph.facebook.com"),
             fb_page_id=os.getenv("FB_PAGE_ID", ""),
