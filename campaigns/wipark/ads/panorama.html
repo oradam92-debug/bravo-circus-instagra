@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<title>WIPARK × אושילנד – פנורמה</title>
+<!-- מודעה: "וואי פארק מגיע לאושילנד" על צילום הפנורמה. ?f=feed (1080x1350) | story (1080x1920)
+     אותו עיצוב כמו רכיב Epic Headline בפיגמה: Rubik Black, קו מתאר מנוגד, חילוץ תלת-ממדי בכחול-לילה. -->
+<style>
+@font-face{font-family:Rubik;font-weight:900;src:url(../brand/fonts/rubik-hebrew-900-normal.woff2) format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:Rubik;font-weight:900;src:url(../brand/fonts/rubik-latin-900-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F}
+:root{--red:#FF133D;--navy:#192A5B;--white:#fff;--w:1080px;--h:1350px;--headTop:56px;--lockBottom:48px;--k:1}
+body.story{--h:1920px;--headTop:250px;--lockBottom:250px}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0d1638}
+.ad{position:relative;width:var(--w);height:var(--h);overflow:hidden;font-family:Rubik,sans-serif}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sky{position:absolute;left:0;right:0;top:0;height:34%;background:linear-gradient(rgba(8,20,51,.38),rgba(8,20,51,0))}
+.bottom{position:absolute;left:0;right:0;bottom:0;height:26%;background:linear-gradient(rgba(8,13,33,0),rgba(8,13,33,.82) 60%,rgba(8,13,33,.96))}
+/* ---------- epic headline ---------- */
+.head{position:absolute;left:0;right:0;top:var(--headTop);display:flex;flex-direction:column;align-items:center;gap:0}
+.line{position:relative;font-weight:900;line-height:1;white-space:nowrap;letter-spacing:.005em}
+.line span{display:block}
+.line .back{position:absolute;inset:0;-webkit-text-stroke:18px var(--stroke);color:var(--stroke);
+  text-shadow:
+   -1px 2px 0 var(--navy),-2px 4px 0 var(--navy),-3px 6px 0 var(--navy),-4px 8px 0 var(--navy),-6px 10px 0 var(--navy),
+   -7px 12px 0 var(--navy),-8px 14px 0 var(--navy),-9px 16px 0 var(--navy),-10px 18px 0 var(--navy),-11px 20px 0 var(--navy),
+   -12px 22px 0 var(--navy),-13px 24px 0 var(--navy),-16px 40px 34px rgba(0,0,0,.45)}
+.line .front{position:relative;color:var(--fill)}
+.l1{font-size:178px;--fill:var(--white);--stroke:var(--red)}
+.l2{font-size:132px;--fill:var(--red);--stroke:var(--white);margin-top:-6px}
+/* ---------- logo lockup ---------- */
+.lock{position:absolute;left:0;right:0;bottom:var(--lockBottom);display:flex;align-items:center;justify-content:center;gap:30px}
+.lock .osh{height:150px}
+.lock .div{width:3px;height:120px;background:#fff;opacity:.9}
+.lock .wip{height:118px}
+</style></head>
+<body>
+<div class="ad">
+  <img class="photo" id="photo" src="../brand/renders/pano-feed.jpg" alt="">
+  <div class="sky"></div><div class="bottom"></div>
+  <div class="head">
+    <div class="line l1"><span class="back">וואי פארק</span><span class="front">וואי פארק</span></div>
+    <div class="line l2"><span class="back">מגיע לאושילנד</span><span class="front">מגיע לאושילנד</span></div>
+  </div>
+  <div class="lock"><img class="osh" src="../brand/oshiland-logo.png" alt="אושילנד"><i class="div"></i><img class="wip" src="../brand/logo.png" alt="WIPARK"></div>
+</div>
+<script>
+  const f = new URLSearchParams(location.search).get("f") || "feed";
+  document.body.className = f;
+  if (f === "story") document.getElementById("photo").src = "../brand/renders/pano-story.jpg";
+</script>
+</body></html>
