@@ -213,6 +213,27 @@ def cmd_reply(cfg: Config, _args) -> None:
                 lambda cid=c["id"]: ig.hide_comment(cid),
                 post_caption=media.get("caption", ""), link=media.get("permalink", ""))
 
+    # comments on the Facebook Page
+    if cfg.fb_page_id and os.getenv("REPLY_FACEBOOK", "true").lower() == "true":
+        try:
+            fb_posts = ig.fb_recent_posts()
+        except InstagramError as e:
+            log.warning("facebook comments skipped: %s", e)
+            fb_posts = []
+        for post in fb_posts:
+            for c in post.get("comments", {}).get("data", []):
+                key = f"fb:{c['id']}"
+                author = c.get("from", {}) or {}
+                if key in seen or author.get("id") == cfg.fb_page_id:
+                    continue
+                if any((r.get("from") or {}).get("id") == cfg.fb_page_id
+                       for r in c.get("comments", {}).get("data", [])):
+                    continue  # already answered by the page
+                act(key, "תגובה לפוסט בפייסבוק", c.get("message", ""), author.get("name", "?"),
+                    lambda txt, cid=c["id"]: ig.fb_reply_comment(cid, txt),
+                    lambda cid=c["id"]: ig.fb_hide_comment(cid),
+                    post_caption=post.get("message", ""), link=post.get("permalink_url", ""))
+
     # direct messages (only inside Instagram's 24h reply window)
     if cfg.enable_dms:
         cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=23)

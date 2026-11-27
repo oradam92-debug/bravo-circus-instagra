@@ -185,6 +185,35 @@ class Instagram:
     def hide_comment(self, comment_id: str) -> dict:
         return self._write(comment_id, hide="true")
 
+    # ---------- Facebook Page comments ----------
+    def fb_recent_posts(self, limit: int = 10) -> list[dict]:
+        node, tok = self._page()
+        r = requests.get(f"{self.base}/{node}/posts", timeout=30, params={
+            "access_token": tok, "limit": limit,
+            "fields": "id,message,permalink_url,comments.limit(50){id,message,from,created_time,comments{from}}"})
+        data = r.json()
+        if "error" in data:
+            raise InstagramError(f"fb posts: {data['error']}")
+        return data.get("data", [])
+
+    def fb_reply_comment(self, comment_id: str, text: str) -> dict:
+        _, tok = self._page()
+        if self.dry_run:
+            log.info("[DRY_RUN] FB reply to %s: %s", comment_id, text)
+            return {"id": "dry-run"}
+        data = requests.post(f"{self.base}/{comment_id}/comments", timeout=30,
+                             data={"message": text, "access_token": tok}).json()
+        if "error" in data:
+            raise InstagramError(f"fb reply: {data['error']}")
+        return data
+
+    def fb_hide_comment(self, comment_id: str) -> dict:
+        _, tok = self._page()
+        if self.dry_run:
+            return {"id": "dry-run"}
+        return requests.post(f"{self.base}/{comment_id}", timeout=30,
+                             data={"is_hidden": "true", "access_token": tok}).json()
+
     # ---------- direct messages (needs instagram_business_manage_messages) ----------
     def _page(self) -> tuple[str, str]:
         """(node, token) used for messaging: 'me' on graph.instagram.com, the Page on graph.facebook.com."""
