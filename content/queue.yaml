@@ -31,3 +31,33 @@ posts:
   approved: true
   status: scheduled
   tour_key: 2026-11-28|גבעת ברנר
+- date: '2026-11-29'
+  time: '19:00'
+  media:
+  - ai/2026-11-29-01871623.jpg
+  caption: 'הספירה לאחור התחילה! ⏳🎪
+
+
+    עוד 13 ימים ופוגשים אתכם בחנוכה עם קרקס החלומות מבית בראבו ✨
+
+
+    📍 אודיטוריום סמולרז, אוניברסיטת תל אביב
+
+    📅 12.12.26
+
+
+    זה הזמן לסגור תוכניות לחנוכה עם הילדים, הסבתא והסבא, והדודים. 🎉
+
+
+    שריינו כרטיסים עכשיו, הלינק בביו 👆
+
+
+    ומי כבר סופר איתנו את הימים? כתבו לנו בתגובות 👇
+
+
+    #קרקסבראבו #קרקסהחלומות #חנוכה #מופעלילדים #בילוילדים #תלאביב #קרקס #חנוכה2026'
+  idea: פוסט ספירה לאחור לחנוכה (13 ימים עד 12.12.26) עם תזכורת לשריין כרטיסים ושאלה קלה לקהל לעידוד תגובות. זה התאריך הפנוי היחיד ב-3 הימים הקרובים, כי 28.11 ו-30.11 תפוסים.
+  approved: true
+  status: scheduled
+  ai_generated: true
+  image_prompt: 'Colorful festive digital illustration in a magical circus style: a grand red-and-gold striped big top tent glowing at dusk, strings of warm golden lights, sparkling stars in a deep blue night sky, a whimsical illustrated juggler tossing glowing colorful balls, a cartoon acrobat flipping in mid-air, a cheerful illustrated clown holding a bunch of balloons, a large glowing golden hanukkiah (menorah) with lit candles in the foreground, confetti and tiny stars floating around. Joyful, warm, family-friendly atmosphere, vibrant saturated colors, eye-catching centered composition that stands out in a feed, square format 1:1. No text, no letters, no logos, no real people, no recognizable characters, not photorealistic, clearly an artistic illustration.'
