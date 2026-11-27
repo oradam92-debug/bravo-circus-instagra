@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<title>WIPARK × אושילנד – סדרת טיזר</title>
+<!-- סדרת טיזר (שלב 1, לפני הפתיחה). ?n=1..4  ·  &f=feed (1080x1350, ברירת מחדל) | story (1080x1920)
+     כללי תוכן: הצילומים הם הדמיה – לא מזכירים מתקנים ספציפיים, מידות, מחירים או תאריכים. -->
+<style>
+@font-face{font-family:Rubik;font-weight:900;src:url(../brand/fonts/rubik-hebrew-900-normal.woff2) format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:Rubik;font-weight:900;src:url(../brand/fonts/rubik-latin-900-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F}
+:root{--red:#FF133D;--navy:#192A5B;--white:#fff;--w:1080px;--h:1350px;--headTop:70px;--lockBottom:48px}
+body.story{--h:1920px;--headTop:260px;--lockBottom:150px}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0d1638}
+.ad{position:relative;width:var(--w);height:var(--h);overflow:hidden;font-family:Rubik,sans-serif}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sky{position:absolute;left:0;right:0;top:0;height:38%;background:linear-gradient(rgba(8,20,51,.45),rgba(8,20,51,0))}
+.bottom{position:absolute;left:0;right:0;bottom:0;height:24%;background:linear-gradient(rgba(8,13,33,0),rgba(8,13,33,.82) 60%,rgba(8,13,33,.96))}
+.kicker{position:absolute;left:0;right:0;top:calc(var(--headTop) - 58px);text-align:center;color:#fff;font-weight:900;font-size:34px;letter-spacing:.06em;text-shadow:0 3px 14px rgba(0,0,0,.6)}
+.head{position:absolute;left:60px;right:60px;top:var(--headTop);display:flex;flex-direction:column;align-items:center}
+.line{position:relative;font-weight:900;line-height:1;white-space:nowrap}
+.line span{display:block}
+.line .back{position:absolute;inset:0;-webkit-text-stroke:18px var(--stroke);color:var(--stroke);
+  text-shadow:-1px 2px 0 var(--navy),-2px 4px 0 var(--navy),-3px 6px 0 var(--navy),-4px 8px 0 var(--navy),-6px 10px 0 var(--navy),
+   -7px 12px 0 var(--navy),-8px 14px 0 var(--navy),-9px 16px 0 var(--navy),-10px 18px 0 var(--navy),-11px 20px 0 var(--navy),
+   -12px 22px 0 var(--navy),-13px 24px 0 var(--navy),-16px 40px 34px rgba(0,0,0,.45)}
+.line .front{position:relative;color:var(--fill)}
+.l1{font-size:170px;--fill:var(--white);--stroke:var(--red)}
+.l2{font-size:132px;--fill:var(--red);--stroke:var(--white);margin-top:-4px}
+.lock{position:absolute;left:0;right:0;bottom:var(--lockBottom);display:flex;align-items:center;justify-content:center;gap:30px}
+.lock .osh{height:150px}.lock .div{width:3px;height:120px;background:#fff;opacity:.9}.lock .wip{height:118px}
+</style></head>
+<body>
+<div class="ad">
+  <img class="photo" id="photo" alt="">
+  <div class="sky"></div><div class="bottom"></div>
+  <div class="kicker" id="kicker"></div>
+  <div class="head">
+    <div class="line l1"><span class="back" id="b1"></span><span class="front" id="f1"></span></div>
+    <div class="line l2"><span class="back" id="b2"></span><span class="front" id="f2"></span></div>
+  </div>
+  <div class="lock"><img class="osh" src="../brand/oshiland-logo.png" alt="אושילנד"><i class="div"></i><img class="wip" src="../brand/logo.png" alt="WIPARK"></div>
+</div>
+<script>
+  // הסדרה – לערוך כאן טקסטים ותמונות
+  const POSTS = {
+    1: { photo: "teaser-1.jpg", kicker: "",                        l1: "משהו ענק",   l2: "מתנפח באושילנד…" },
+    2: { photo: "teaser-2.jpg", kicker: "",                        l1: "מוכנים",     l2: "לאתגר?" },
+    3: { photo: "teaser-3.jpg", kicker: "פארק האקסטרים של ישראל", l1: "האקסטרים",   l2: "מגיע לשרון" },
+    4: { photo: "../pano-feed.jpg", story: "../pano-story.jpg", kicker: "", l1: "בקרוב", l2: "באושילנד" },
+  };
+  const q = new URLSearchParams(location.search);
+  const f = q.get("f") || "feed", n = q.get("n") || "1", P = POSTS[n];
+  document.body.className = f;
+  document.getElementById("photo").src = "../brand/renders/teaser/" + (f === "story" && P.story ? P.story : P.photo);
+  document.getElementById("kicker").textContent = P.kicker;
+  for (const k of ["1", "2"]) { document.getElementById("b" + k).textContent = P["l" + k]; document.getElementById("f" + k).textContent = P["l" + k]; }
+  // shrink a line if it is wider than the frame
+  document.fonts.ready.then(() => document.querySelectorAll(".line").forEach(l => {
+    const max = document.querySelector(".head").clientWidth; const w = l.scrollWidth;
+    if (w > max) l.style.fontSize = (parseFloat(getComputedStyle(l).fontSize) * max / w) + "px";
+  }));
+</script>
+</body></html>
