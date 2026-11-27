@@ -93,6 +93,43 @@ def test_json_parsing():
     assert _json('sure: {"action": "reply"}')["action"] == "reply"
 
 
+def test_plan_retries_truncated_json(monkeypatch):
+    from agent import brain as B
+
+    calls = []
+    responses = iter(['[{"caption": "unfinished', '[{"caption": "complete"}]'])
+    def create(**kwargs):
+        calls.append((kwargs["max_tokens"], list(kwargs["messages"][0]["content"])))
+        return SimpleNamespace(content=[SimpleNamespace(type="text", text=next(responses))])
+
+    monkeypatch.setattr(B, "_brand", lambda: "")
+    planner = B.Brain.__new__(B.Brain)
+    planner.model = "test"
+    planner.client = SimpleNamespace(messages=SimpleNamespace(create=create))
+
+    assert planner.plan_posts([], "2026-11-27", 3, [], ai_images=True) == [{"caption": "complete"}]
+    assert [tokens for tokens, _ in calls] == [16000, 16000]
+    assert len(calls[1][1]) == len(calls[0][1]) + 1
+    assert "600" in calls[1][1][-1]["text"] and "400" in calls[1][1][-1]["text"]
+
+
+def test_plan_does_not_retry_valid_json(monkeypatch):
+    from agent import brain as B
+
+    calls = []
+    def create(**kwargs):
+        calls.append(kwargs)
+        return SimpleNamespace(content=[SimpleNamespace(type="text", text="[]")])
+
+    monkeypatch.setattr(B, "_brand", lambda: "")
+    planner = B.Brain.__new__(B.Brain)
+    planner.model = "test"
+    planner.client = SimpleNamespace(messages=SimpleNamespace(create=create))
+
+    assert planner.plan_posts([], "2026-11-27", 3, []) == []
+    assert len(calls) == 1 and calls[0]["max_tokens"] == 16000
+
+
 def test_tour_posts_day_before_with_poster(repo, monkeypatch, tmp_path):
     from agent import tour as T
     tour_file = tmp_path / "tour.yaml"
