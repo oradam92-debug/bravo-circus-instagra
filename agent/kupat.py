@@ -26,7 +26,13 @@ def scrape(url: str) -> tuple[str, list[dict]]:
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page(locale="he-IL", viewport={"width": 1280, "height": 2000})
-        page.goto(url, wait_until="networkidle", timeout=90_000)
+        # Kupat keeps background requests open, so "networkidle" never fires – wait for the list instead.
+        page.goto(url, wait_until="domcontentloaded", timeout=90_000)
+        try:
+            page.get_by_text("בחרו את היום").first.wait_for(timeout=30_000)
+        except Exception:
+            log.warning("Kupat list marker not found – reading the page anyway")
+        page.wait_for_timeout(3000)
         # Load lazy content / "show more" lists.
         for _ in range(8):
             page.mouse.wheel(0, 4000)

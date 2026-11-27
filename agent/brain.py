@@ -44,7 +44,8 @@ class Brain:
     # ---------- content planning ----------
     def plan_posts(self, media_files: list[Path], today: str, days: int,
                    recent_captions: list[str], extra_brief: str = "",
-                   ai_images: bool = False, skip_dates: list[str] | None = None) -> list[dict]:
+                   ai_images: bool = False, skip_dates: list[str] | None = None,
+                   tour: str = "") -> list[dict]:
         system = (
             "אתה מנהל הסושיאל של קרקס בראבו. אתה כותב פוסטים לאינסטגרם בעברית, "
             "לפי מדריך המותג הבא. אסור להמציא עובדות (מחירים, תאריכים, אולמות, משתתפים) "
@@ -77,7 +78,13 @@ class Brain:
         content.append({"type": "text", "text": f"""
 היום {today}. תכנן פוסטים ל-{days} הימים הקרובים (פוסט אחד ליום לכל היותר).
 {media_rule}
-גוון בין סוגי הפוסטים שבמדריך. {('אל תתכנן פוסטים בתאריכים האלה (כבר תפוסים): ' + ', '.join(skip_dates)) if skip_dates else ''}
+גוון בין סוגי הפוסטים שבמדריך. {('''
+לוח ההופעות הקרוב (זה המידע העדכני – הוא גובר על המדריך):
+''' + tour + '''
+- ביום שיש בו הופעה, אפשר להזכיר שהיום אנחנו בעיר הזו (עם השעות). לא לכתוב "מחר" על הופעה – לזה יש פוסט נפרד.
+- כשמזכירים את חנוכה – זה סיבוב הופעות בכל הארץ, לא רק תל אביב. אפשר להפנות ל"כל המועדים בקישור בביו".
+- להשתמש רק בתאריכים/ערים/אולמות/שעות מהלוח. שעה חסרה = לא לציין שעה.''') if tour else ''}
+{('אל תתכנן פוסטים בתאריכים האלה (כבר תפוסים): ' + ', '.join(skip_dates)) if skip_dates else ''}
 פוסטים אחרונים שכבר עלו (לא לחזור עליהם): {json.dumps(recent_captions[:10], ensure_ascii=False)}
 {('הנחיות נוספות לשבוע הזה: ' + extra_brief) if extra_brief else ''}
 
