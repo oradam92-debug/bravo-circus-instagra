@@ -31,6 +31,8 @@ class FakeIG:
     def __init__(self): self.calls = []
     def me(self): return {"username": "circusbravo"}
     def publish(self, urls, caption, ai_generated=False): self.calls.append(("pub", urls)); return "IG1"
+    def publish_story(self, url): self.calls.append(("story", url)); return "S1"
+    def publish_facebook(self, urls, caption): self.calls.append(("fb", urls)); return "F1"
     def recent_media(self, limit=10): return [{"id": "M1", "caption": "פוסט", "permalink": "http://x"}]
     def comments(self, mid):
         return [{"id": "C1", "text": "מתי המופע?", "username": "dana"},
@@ -66,6 +68,7 @@ def test_plan_then_publish(repo, monkeypatch):
     q = store.load_queue(repo)
     assert q[0]["status"] == "published" and q[1]["status"] == "scheduled"  # only today's is due
     assert ig.calls[0][1][0].endswith("/media/a.jpg")
+    assert ig.calls[1][0] == "story" and q[0]["story_id"] == "S1"
 
 
 def test_reply_and_escalate(repo, monkeypatch):

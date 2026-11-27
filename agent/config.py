@@ -32,6 +32,8 @@ class Config:
     github_repo: str
     github_token: str
     timezone: str
+    graph_host: str
+    fb_page_id: str
 
     @classmethod
     def load(cls) -> "Config":
@@ -53,6 +55,8 @@ class Config:
             github_repo=repo,
             github_token=os.getenv("GITHUB_TOKEN", ""),
             timezone=os.getenv("TIMEZONE", "Asia/Jerusalem"),
+            graph_host=os.getenv("GRAPH_HOST", "graph.facebook.com"),
+            fb_page_id=os.getenv("FB_PAGE_ID", ""),
         )
 
     def require(self, *names: str) -> None:
