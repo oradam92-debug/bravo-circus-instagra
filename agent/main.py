@@ -89,6 +89,11 @@ def cmd_plan(cfg: Config, args) -> None:
             except Exception as e:
                 log.warning("AI image failed for %s: %s", date, e)
                 continue
+            try:
+                from .overlay import brand
+                brand(out)
+            except Exception as e:
+                log.warning("branding overlay failed: %s", e)
             files, is_ai = [str(out.relative_to(MEDIA_DIR))], True
         if not files or not all((MEDIA_DIR / m).exists() for m in files):
             log.warning("skip post with missing media: %s", files)
