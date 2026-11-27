@@ -12,6 +12,8 @@
 
 # מתעדכן אוטומטית כל בוקר מאתר קופת תל אביב (python -m agent.main sync).
 
+# מתעדכן אוטומטית כל בוקר מאתר קופת תל אביב (python -m agent.main sync).
+
 post_time: '10:00'
 default_link: https://tickets.kupat.co.il/booking/features/3013?display=list
 shows:
@@ -19,14 +21,17 @@ shows:
   time: '10:00'
   city: גבעת ברנר
   venue: אולם מופעים גבעת ברנר
+  poster: posters/givat-brenner.jpg
 - date: '2026-11-28'
   time: '12:30'
   city: גבעת ברנר
   venue: אולם מופעים גבעת ברנר
+  poster: posters/givat-brenner.jpg
 - date: '2026-11-28'
   time: '16:00'
   city: גבעת ברנר
   venue: אולם מופעים גבעת ברנר
+  poster: posters/givat-brenner.jpg
 - date: '2026-11-29'
   time: '16:30'
   city: מעלה אדומים
@@ -57,10 +62,19 @@ shows:
   time: '16:30'
   city: ראש העין
   venue: היכל התרבות ראש העין
+  poster: posters/rosh-haayin.jpg
 - date: '2026-12-03'
   time: '18:30'
   city: ראש העין
   venue: היכל התרבות ראש העין
+  poster: posters/rosh-haayin.jpg
+- date: '2026-12-04'
+  time: '13:00'
+  city: שער הנגב
+  venue: אולם דורות
+  poster: posters/shaar-hanegev.jpg
+  note: מופע חדש!
+  manual: true
 - date: '2026-12-05'
   time: '11:00'
   city: גן שמואל
@@ -89,10 +103,14 @@ shows:
   time: '12:30'
   city: יגור
   venue: תיאטרון יד למגינים יגור
+  poster: posters/black-friday-yagur.jpg
+  note: 'מבצע בלאק פריידי: 79 ₪ במקום 119 ₪ עם קוד הנחה 7979'
 - date: '2026-12-08'
   time: '16:00'
   city: יגור
   venue: תיאטרון יד למגינים יגור
+  poster: posters/black-friday-yagur.jpg
+  note: 'מבצע בלאק פריידי: 79 ₪ במקום 119 ₪ עם קוד הנחה 7979'
 - date: '2026-12-09'
   time: '12:30'
   city: באר שבע

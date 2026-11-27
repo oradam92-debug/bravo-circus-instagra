@@ -269,6 +269,28 @@ def make_poster(stop: dict, out: Path, base: Path | None = None) -> Path:
     return out
 
 
+def insta_fit(src: Path, out: Path) -> Path:
+    """Instagram feed accepts 4:5 to 1.91:1. Taller/wider posters are not cropped –
+    they're placed on a blurred, darkened copy of themselves at 4:5 (1080x1350)."""
+    from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+    img = Image.open(src).convert("RGB")
+    ratio = img.width / img.height
+    if 0.8 <= ratio <= 1.91:
+        if src.suffix.lower() in {".jpg", ".jpeg"}:
+            return src
+        out.parent.mkdir(parents=True, exist_ok=True)
+        img.save(out, "JPEG", quality=94)
+        return out
+    W, H = (1080, 1350) if ratio < 0.8 else (1080, 566)
+    bg = ImageOps.fit(img, (W, H), Image.LANCZOS).filter(ImageFilter.GaussianBlur(40))
+    bg = ImageEnhance.Brightness(bg).enhance(0.45)
+    fg = ImageOps.contain(img, (W, H), Image.LANCZOS)
+    bg.paste(fg, ((W - fg.width) // 2, (H - fg.height) // 2))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    bg.save(out, "JPEG", quality=94)
+    return out
+
+
 def slug(stop: dict) -> str:
     import hashlib
     return f"{stop['date']}-{hashlib.md5(stop['city'].encode()).hexdigest()[:8]}"

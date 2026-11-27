@@ -63,6 +63,12 @@ def merge(new_shows: list[dict], tour: dict) -> dict:
             if old.get(k):
                 row[k] = old[k]
         out.append(row)
+    # Shows sold outside Kupat are marked `manual: true` by hand – keep them.
+    have = {(str(s["date"]), str(s.get("city"))) for s in out}
+    for s in tour.get("shows") or []:
+        if s.get("manual") and (str(s.get("date")), str(s.get("city"))) not in have:
+            out.append(s)
+    out.sort(key=lambda s: (str(s["date"]), str(s.get("time", ""))))
     tour = dict(tour)
     tour["shows"] = out
     return tour

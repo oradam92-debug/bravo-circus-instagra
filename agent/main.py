@@ -243,8 +243,11 @@ def cmd_tour(cfg: Config, args) -> None:
             if key in have:
                 continue
             if stop.get("poster"):
-                media = [stop["poster"]]
-                if not (MEDIA_DIR / stop["poster"]).exists():
+                src = MEDIA_DIR / stop["poster"]
+                if src.exists():
+                    fitted = T.insta_fit(src, T.POSTER_DIR / f"{T.slug(stop)}-poster.jpg")
+                    media = [str(fitted.relative_to(MEDIA_DIR))]
+                else:
                     log.warning("poster %s not found in media/ – generating one", stop["poster"])
                     media = []
             else:
