@@ -59,6 +59,7 @@ posts:
   approved: true
   status: scheduled
   reel_key: '2026-11-28'
+  last_error: 'POST 17841453120285016/media: {''message'': ''API access blocked.'', ''code'': 200, ''type'': ''OAuthException'', ''error_subcode'': 5258005, ''fbtrace_id'': ''AWQfjDVQFNROjUNyhfIFhQS''}'
 - date: '2026-11-27'
   time: '20:00'
   media:
