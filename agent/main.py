@@ -7,6 +7,8 @@
   python -m agent.main tour       # queue "מחר אנחנו מגיעים ל..." posts (poster + Kupat link) from content/tour.yaml
   python -m agent.main sync       # update content/tour.yaml from the Kupat Tel Aviv site
   python -m agent.main refresh    # extend the Instagram token by 60 days
+  python -m agent.main marketing --campaign hawaii-park [--visuals] [--rerender]
+                                  # marketing agent: full season plan + graphic language (campaigns/<name>/)
 """
 from __future__ import annotations
 
@@ -388,6 +390,19 @@ def cmd_refresh(cfg: Config, _args) -> None:
     print(f"הטוקן חודש, בתוקף לעוד {days} ימים.")
 
 
+# ---------------------------------------------------------------- marketing
+def cmd_marketing(cfg: Config, args) -> None:
+    from . import marketing
+    if args.rerender:
+        files = marketing.rerender(args.campaign)
+    else:
+        cfg.require("anthropic_api_key")
+        files = marketing.run(args.campaign, cfg.anthropic_api_key, os.getenv("MARKETING_MODEL", cfg.model),
+                              extra=args.brief or os.getenv("MARKETING_BRIEF", ""), visuals=args.visuals)
+    for f in files:
+        print("נכתב:", f)
+
+
 def main(argv=None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     ap = argparse.ArgumentParser(prog="agent")
@@ -401,10 +416,16 @@ def main(argv=None) -> None:
     t.add_argument("--days", type=int, default=2, help="כמה ימים קדימה לבדוק בלוח")
     sub.add_parser("sync")
     sub.add_parser("refresh")
+    mk = sub.add_parser("marketing")
+    mk.add_argument("--campaign", default="hawaii-park")
+    mk.add_argument("--brief", default="", help="הנחיות נוספות לסוכן")
+    mk.add_argument("--visuals", action="store_true", help="לייצר קי-ויז'ואלים ב-AI (OPENAI_API_KEY)")
+    mk.add_argument("--rerender", action="store_true", help="לבנות מחדש את הקבצים מ-plan.json בלי לקרוא למודל")
     args = ap.parse_args(argv)
     cfg = Config.load()
     {"check": cmd_check, "plan": cmd_plan, "publish": cmd_publish,
-     "reply": cmd_reply, "tour": cmd_tour, "sync": cmd_sync, "refresh": cmd_refresh}[args.cmd](cfg, args)
+     "reply": cmd_reply, "tour": cmd_tour, "sync": cmd_sync, "refresh": cmd_refresh,
+     "marketing": cmd_marketing}[args.cmd](cfg, args)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,47 @@
+name: סוכן שיווק – תוכנית קמפיין
+on:
+  workflow_dispatch:
+    inputs:
+      campaign:
+        description: "שם הקמפיין (תיקייה ב-campaigns/)"
+        default: "hawaii-park"
+      brief:
+        description: "הנחיות נוספות לסוכן (לא חובה)"
+        default: ""
+      visuals:
+        description: "לייצר גם קי-ויז'ואלים ב-AI"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: bravo-marketing-${{ inputs.campaign }}
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      IMAGE_MODEL: ${{ vars.IMAGE_MODEL || 'gpt-image-2' }}
+      CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL || 'claude-sonnet-5-5' }}
+      MARKETING_MODEL: ${{ vars.MARKETING_MODEL || 'claude-opus-5-5' }}
+      CAMPAIGN: ${{ inputs.campaign }}
+      MARKETING_BRIEF: ${{ inputs.brief }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m agent.main marketing --campaign "$CAMPAIGN" ${{ inputs.visuals && '--visuals' || '' }}
+      - name: Save plan
+        run: |
+          git config user.name "bravo-agent"
+          git config user.email "bravo-agent@users.noreply.github.com"
+          git add campaigns
+          git diff --cached --quiet && exit 0
+          git commit -m "marketing agent: $CAMPAIGN plan"
+          git pull --rebase
+          git push

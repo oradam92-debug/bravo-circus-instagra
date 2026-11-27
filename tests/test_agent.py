@@ -1,5 +1,6 @@
 """Offline tests – no real Instagram/Claude calls."""
 import datetime as dt
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -168,3 +169,47 @@ def test_decide_reply_accepts_extra_context():
     import inspect
     from agent.brain import Brain
     assert any(p.kind == p.VAR_KEYWORD for p in inspect.signature(Brain.decide_reply).parameters.values())
+
+
+# ---------------------------------------------------------------- marketing agent
+def _mk_brief():
+    return {"name": "הוואי פארק", "location": {"venue": "אושילנד כפר סבא", "address": "[להשלים]"},
+            "season": {"start": "2027-02-15", "end": "2027-06-11", "teaser_start": "2027-02-01"},
+            "product": {"ticket_price": "[להשלים]", "ages": "2-12"}}
+
+
+def test_marketing_skeleton_weeks_and_holidays():
+    from agent import marketing as mk
+    sk = mk.season_skeleton(_mk_brief())
+    assert sk["weeks"][0]["week_start"] == "2027-01-31"          # Sunday before the teaser
+    assert sk["weeks"][-1]["week_end"] >= "2027-06-11"
+    names = [h["name"] for h in sk["holidays"]]
+    assert "פורים" in names and any("שבועות" in n for n in names)
+    quiet = [d for w in sk["weeks"] for d in w["quiet_days"]]
+    assert quiet == ["2027-05-04", "2027-05-11"]                  # memorial days – no festive content
+    assert mk.unknowns(_mk_brief()) == ["location.address", "product.ticket_price"]
+
+
+def test_marketing_plan_is_cleaned_and_rendered(tmp_path, monkeypatch):
+    from agent import marketing as mk
+    monkeypatch.setattr(mk, "CAMPAIGNS_DIR", tmp_path)
+    (tmp_path / "hp").mkdir()
+    import yaml as _y
+    (tmp_path / "hp" / "brief.yaml").write_text(_y.safe_dump(_mk_brief(), allow_unicode=True), encoding="utf-8")
+    fake = {"title": "T", "big_idea": {"name": "הקיץ הגיע מוקדם"},
+            "phases": [{"key": "launch", "name": "השקה", "start": "2027-02-15", "end": "2027-02-28"}],
+            "graphic_language": {"palette": [{"name": "לגונה", "hex": "#00B5AD"}, {"name": "רע", "hex": "teal"}],
+                                 "fonts": [{"name": "Fredoka"}], "key_visuals": [{"name": "kv", "prompt": "x"}]},
+            "weekly_calendar": [{"week_start": "2027-02-14", "theme": "פתחנו"}, {"week_start": "2030-01-01", "theme": "bogus"}]}
+    monkeypatch.setattr(mk, "ask_plan", lambda *a, **k: fake)
+    files = mk.run("hp", "key", "model")
+    plan = json.loads((tmp_path / "hp" / "plan.json").read_text(encoding="utf-8"))
+    assert [c["hex"] for c in plan["graphic_language"]["palette"]] == ["#00B5AD"]   # invalid colour dropped
+    weeks = [w["week_start"] for w in plan["weekly_calendar"]]
+    assert "2030-01-01" not in weeks and len(weeks) == 19                           # exactly the real weeks
+    assert plan["missing_fields"] == ["location.address", "product.ticket_price"]
+    md = (tmp_path / "hp" / "plan.md").read_text(encoding="utf-8")
+    assert "פתחנו" in md and "product.ticket_price" in md
+    assert "<html" in (tmp_path / "hp" / "style-board.html").read_text(encoding="utf-8")
+    assert len(files) == 5
+    assert mk.rerender("hp")                                                        # no model call needed

@@ -42,8 +42,11 @@ def _refs() -> list[Path]:
     return sorted(p for p in STYLE_DIR.iterdir() if p.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"})[:4]
 
 
-def generate(prompt: str, out: Path, size: str = "1024x1536") -> Path:
-    """Generate an image from `prompt` and save it as a 1080x1350 (4:5) JPG."""
+def generate(prompt: str, out: Path, size: str = "1024x1536", style: str | None = None,
+             refs: list[Path] | None = None, fit: tuple[int, int] = (1080, 1350)) -> Path:
+    """Generate an image from `prompt` and save it as a JPG cropped to `fit` (default 1080x1350, 4:5).
+
+    `style`/`refs` default to the Circus of Dreams look; other campaigns pass their own."""
     from PIL import Image, ImageOps
 
     key = os.getenv("OPENAI_API_KEY")
@@ -52,14 +55,15 @@ def generate(prompt: str, out: Path, size: str = "1024x1536") -> Path:
     model = os.getenv("IMAGE_MODEL", "gpt-image-2")
     quality = os.getenv("IMAGE_QUALITY", "medium")
     headers = {"Authorization": f"Bearer {key}"}
-    refs = _refs()
+    style = STYLE if style is None else style
+    refs = _refs() if refs is None else refs
 
     if refs:  # style-reference mode: the posters guide the look
         files = [("image[]", (p.name, p.read_bytes(), "image/jpeg" if p.suffix.lower() != ".png" else "image/png"))
                  for p in refs]
         r = requests.post(
             "https://api.openai.com/v1/images/edits", headers=headers, files=files,
-            data={"model": model, "prompt": STYLE + prompt, "size": size, "quality": quality, "n": "1"},
+            data={"model": model, "prompt": style + prompt, "size": size, "quality": quality, "n": "1"},
             timeout=300,
         )
         if r.status_code >= 400:
@@ -68,15 +72,15 @@ def generate(prompt: str, out: Path, size: str = "1024x1536") -> Path:
     if not refs:
         r = requests.post(
             "https://api.openai.com/v1/images/generations", headers=headers,
-            json={"model": model, "prompt": STYLE + prompt, "size": size, "quality": quality, "n": 1},
+            json={"model": model, "prompt": style + prompt, "size": size, "quality": quality, "n": 1},
             timeout=300,
         )
     data = r.json()
     if r.status_code >= 400 or "data" not in data:
         raise RuntimeError(f"image generation failed: {data.get('error', data)}")
     img = Image.open(io.BytesIO(base64.b64decode(data["data"][0]["b64_json"]))).convert("RGB")
-    # Instagram feed accepts 4:5 at most – crop/resize to 1080x1350.
-    img = ImageOps.fit(img, (1080, 1350), Image.LANCZOS)
+    # Instagram feed accepts 4:5 at most – crop/resize (default 1080x1350).
+    img = ImageOps.fit(img, fit, Image.LANCZOS)
     out.parent.mkdir(parents=True, exist_ok=True)
     img.save(out, "JPEG", quality=92)
     log.info("AI image saved: %s (style refs: %d)", out, len(refs))
