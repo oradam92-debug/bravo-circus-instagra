@@ -1,7 +1,7 @@
 name: פרסום פוסט יומי
 on:
   schedule:
-    - cron: "12 * * * *"
+    - cron: "7,22,37,52 * * * *"
   workflow_dispatch:
 permissions:
   contents: write

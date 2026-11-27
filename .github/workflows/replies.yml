@@ -1,7 +1,7 @@
 name: מענה לתגובות והודעות
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "3,18,33,48 * * * *"
   workflow_dispatch:
 permissions:
   contents: write
