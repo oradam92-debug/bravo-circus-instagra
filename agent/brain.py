@@ -105,7 +105,13 @@ class Brain:
 החזר JSON בלבד – מערך של אובייקטים:
 {schema}
 """})
-        return _json(self._ask(system, content))
+        text = self._ask(system, content, max_tokens=16000)
+        try:
+            return _json(text)
+        except ValueError:
+            log.warning("plan JSON invalid – retrying with a shorter answer")
+            content.append({"type": "text", "text": "קצר: כיתוב עד 600 תווים ו-image_prompt עד 400 תווים לכל פוסט. JSON בלבד."})
+            return _json(self._ask(system, content, max_tokens=16000))
 
     # ---------- replying ----------
     def decide_reply(self, kind: str, text: str, username: str, post_caption: str = "",
