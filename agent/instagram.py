@@ -15,11 +15,17 @@ class InstagramError(RuntimeError):
 
 
 class Instagram:
-    def __init__(self, user_id: str, token: str, version: str = "v25.0", dry_run: bool = True):
+    def __init__(self, user_id: str, token: str, version: str = "v25.0", dry_run: bool = True,
+                 host: str = "graph.facebook.com", page_id: str = ""):
+        """host: graph.facebook.com (Facebook Login for Business / system-user token – the default
+        for new Meta apps) or graph.instagram.com (legacy Instagram Login token)."""
         self.user_id = user_id
         self.token = token
-        self.base = f"https://graph.instagram.com/{version}"
+        self.host = host
+        self.base = f"https://{host}/{version}"
         self.dry_run = dry_run
+        self.page_id = page_id  # Facebook Page linked to the IG account (needed for DMs on graph.facebook.com)
+        self._page_token = ""
 
     # ---------- low level ----------
     def _req(self, method: str, path: str, **params: Any) -> dict:
@@ -57,10 +63,14 @@ class Instagram:
 
     # ---------- account ----------
     def me(self) -> dict:
-        return self._req("GET", "me", fields="user_id,username,name,account_type,followers_count,media_count")
+        if self.host == "graph.instagram.com":
+            return self._req("GET", "me", fields="user_id,username,name,account_type,followers_count,media_count")
+        return self._req("GET", self.user_id, fields="id,username,name,followers_count,media_count")
 
     def refresh_token(self) -> dict:
-        """Extend a long-lived token by 60 days (token must be >24h old)."""
+        """Extend a long-lived Instagram-Login token by 60 days (system-user tokens never expire)."""
+        if self.host != "graph.instagram.com":
+            return {"access_token": "", "expires_in": 0, "never_expires": True}
         r = requests.get(
             "https://graph.instagram.com/refresh_access_token",
             params={"grant_type": "ig_refresh_token", "access_token": self.token},
@@ -118,6 +128,43 @@ class Instagram:
             self._wait_container(cid)
         return self._write(f"{self.user_id}/media_publish", creation_id=cid)["id"]
 
+    def publish_story(self, media_url: str) -> str:
+        """Publish an image or video as an Instagram Story."""
+        is_video = media_url.lower().endswith((".mp4", ".mov"))
+        params = {"media_type": "STORIES"}
+        params["video_url" if is_video else "image_url"] = media_url
+        cid = self._write(f"{self.user_id}/media", **params)["id"]
+        self._wait_container(cid)
+        return self._write(f"{self.user_id}/media_publish", creation_id=cid)["id"]
+
+    def publish_facebook(self, media_urls: list[str], caption: str) -> str:
+        """Cross-post to the linked Facebook Page (needs pages_manage_posts)."""
+        node, tok = self._page()
+        if self.dry_run:
+            log.info("[DRY_RUN] FB post on %s: %s %s", node, media_urls, caption[:60])
+            return "dry-run"
+        url = media_urls[0]
+        if url.lower().endswith((".mp4", ".mov")):
+            r = requests.post(f"{self.base}/{node}/videos", timeout=300,
+                              data={"file_url": url, "description": caption, "access_token": tok})
+        elif len(media_urls) == 1:
+            r = requests.post(f"{self.base}/{node}/photos", timeout=120,
+                              data={"url": url, "message": caption, "access_token": tok})
+        else:  # multi-photo post: upload unpublished photos, then attach them
+            import json
+            ids = []
+            for u in media_urls[:10]:
+                rr = requests.post(f"{self.base}/{node}/photos", timeout=120,
+                                   data={"url": u, "published": "false", "access_token": tok}).json()
+                if "id" in rr:
+                    ids.append({"media_fbid": rr["id"]})
+            r = requests.post(f"{self.base}/{node}/feed", timeout=120,
+                              data={"message": caption, "attached_media": json.dumps(ids), "access_token": tok})
+        data = r.json()
+        if "error" in data:
+            raise InstagramError(f"facebook post: {data['error']}")
+        return data.get("post_id") or data.get("id", "")
+
     # ---------- comments ----------
     def recent_media(self, limit: int = 10) -> list[dict]:
         return self._req(
@@ -139,14 +186,36 @@ class Instagram:
         return self._write(comment_id, hide="true")
 
     # ---------- direct messages (needs instagram_business_manage_messages) ----------
+    def _page(self) -> tuple[str, str]:
+        """(node, token) used for messaging: 'me' on graph.instagram.com, the Page on graph.facebook.com."""
+        if self.host == "graph.instagram.com":
+            return "me", self.token
+        if not self.page_id:
+            raise InstagramError("FB_PAGE_ID is required for direct messages")
+        if not self._page_token:
+            self._page_token = self._req("GET", self.page_id, fields="access_token").get("access_token", self.token)
+        return self.page_id, self._page_token
+
     def conversations(self, limit: int = 20) -> list[dict]:
-        return self._req(
-            "GET", "me/conversations",
-            platform="instagram", limit=limit,
-            fields="id,updated_time,messages.limit(5){id,from,message,created_time}",
-        ).get("data", [])
+        node, tok = self._page()
+        r = requests.get(f"{self.base}/{node}/conversations", timeout=30, params={
+            "platform": "instagram", "limit": limit, "access_token": tok,
+            "fields": "id,updated_time,messages.limit(5){id,from,message,created_time}"})
+        data = r.json()
+        if "error" in data:
+            raise InstagramError(f"conversations: {data['error']}")
+        return data.get("data", [])
 
     def send_dm(self, recipient_id: str, text: str) -> dict:
         import json
-        return self._write("me/messages", recipient=json.dumps({"id": recipient_id}),
-                           message=json.dumps({"text": text}))
+        node, tok = self._page()
+        if self.dry_run:
+            log.info("[DRY_RUN] DM to %s: %s", recipient_id, text)
+            return {"id": "dry-run"}
+        r = requests.post(f"{self.base}/{node}/messages", timeout=30, data={
+            "recipient": json.dumps({"id": recipient_id}), "message": json.dumps({"text": text}),
+            "access_token": tok})
+        data = r.json()
+        if "error" in data:
+            raise InstagramError(f"send_dm: {data['error']}")
+        return data

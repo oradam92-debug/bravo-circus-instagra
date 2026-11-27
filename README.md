@@ -85,7 +85,8 @@ https://platform.openai.com/api-keys ← Create new secret key. מטעינים �
 | `WEEKLY_BRIEF` | — | הנחיה קבועה לתכנון, למשל "להתמקד במכירת כרטיסים לחנוכה" |
 | `TOUR_POST_TIME` | `10:00` | באיזו שעה עולה פוסט "מחר אנחנו מגיעים" |
 | `CLAUDE_MODEL` | `claude-sonnet-5-5` | המודל שכותב ועונה |
-| `IMAGE_MODEL` | `gpt-image-2` | המודל שמייצר תמונות |
+| `USE_AI_IMAGES` | `false` | `true` = הסוכן מייצר תמונות חדשות ב-AI. כברירת מחדל הוא משתמש רק בפוסטרים של הקמפיין שב-`media/` |
+| `IMAGE_MODEL` | `gpt-image-2` | המודל שמייצר תמונות (רק אם USE_AI_IMAGES=true) |
 
 ## ✏️ שליטה ידנית
 - **לשנות/למחוק פוסט מתוכנן** – עורכים את `content/queue.yaml` (טקסט, שעה, תמונות, `approved`).

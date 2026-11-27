@@ -33,7 +33,8 @@ def now(cfg: Config) -> dt.datetime:
 
 def ig_client(cfg: Config) -> Instagram:
     cfg.require("ig_user_id", "ig_access_token")
-    return Instagram(cfg.ig_user_id, cfg.ig_access_token, cfg.graph_version, cfg.dry_run)
+    return Instagram(cfg.ig_user_id, cfg.ig_access_token, cfg.graph_version, cfg.dry_run,
+                     host=cfg.graph_host, page_id=cfg.fb_page_id)
 
 
 def brain(cfg: Config):
@@ -139,6 +140,18 @@ def cmd_publish(cfg: Config, _args) -> None:
             continue
         p.update(status="published", ig_id=ig_id, published_at=t.isoformat(timespec="minutes"))
         p.pop("last_error", None)
+        # Same image as an Instagram Story
+        if os.getenv("ALSO_STORY", "true").lower() == "true" and p.get("story", True):
+            try:
+                p["story_id"] = ig.publish_story(urls[0])
+            except InstagramError as e:
+                log.warning("story failed for %s: %s", p["date"], e)
+        # Same post on the Facebook Page
+        if os.getenv("CROSSPOST_FACEBOOK", "true").lower() == "true" and cfg.fb_page_id:
+            try:
+                p["fb_id"] = ig.publish_facebook(urls, p["caption"])
+            except InstagramError as e:
+                log.warning("facebook cross-post failed for %s: %s", p["date"], e)
         done += 1
         print(f"פורסם: {p['date']} -> {ig_id}")
     save_queue(queue)
@@ -250,6 +263,9 @@ def cmd_tour(cfg: Config, args) -> None:
             else:
                 media = []
             ai_bg = False
+            own = [m for m in schedule.get("default_posters") or [] if (MEDIA_DIR / m).exists()]
+            if not media and own:  # rotate through the brand's own posters – no new images
+                media = [own[dt.date.fromisoformat(stop["date"]).toordinal() % len(own)]]
             if not media:
                 out = T.POSTER_DIR / f"{T.slug(stop)}.jpg"
                 bg = base
@@ -296,6 +312,9 @@ def cmd_sync(cfg: Config, _args) -> None:
 # ---------------------------------------------------------------- refresh
 def cmd_refresh(cfg: Config, _args) -> None:
     data = ig_client(cfg).refresh_token()
+    if data.get("never_expires"):
+        print("הטוקן הוא טוקן מערכת (System User) – הוא לא פג, אין צורך לחדש.")
+        return
     days = int(data.get("expires_in", 0)) // 86400
     out = os.getenv("GITHUB_OUTPUT")
     if out:

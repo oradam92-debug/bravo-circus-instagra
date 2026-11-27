@@ -6,7 +6,7 @@ posts:
 - date: '2026-11-27'
   time: '10:00'
   media:
-  - tour/2026-11-28-882dabc5.jpg
+  - poster-juggler-hanukkah.jpg
   caption: '🎪✨ מחר אנחנו מגיעים לגבעת ברנר! ✨🎪
 
 
@@ -34,7 +34,7 @@ posts:
 - date: '2026-11-28'
   time: '10:00'
   media:
-  - tour/2026-11-29-43ecfd04.jpg
+  - poster-aerial-hanukkah.jpg
   caption: 'מחר אנחנו מגיעים למעלה אדומים! 🎪✨
 
 
@@ -43,11 +43,9 @@ posts:
     זה הזמן לקחת את כל המשפחה ולבלות יחד ביום של קסם. 🎉
 
 
-    📅 יום ראשון, 29.11
+    📅 יום ראשון, 29.11 · 🕐 16:30 | 18:30
 
-    🕟 שעות: 16:30, 18:30
-
-    📍 אולם: היכל התרבות מעלה אדומים
+    📍 היכל התרבות מעלה אדומים
 
 
     שריינו כרטיסים!
@@ -62,52 +60,29 @@ posts:
   approved: true
   status: scheduled
   tour_key: 2026-11-29|מעלה אדומים
-  ai_generated: true
 - date: '2026-11-29'
-  time: '13:00'
+  time: '19:00'
   media:
-  - ai/2026-11-29-01871623.jpg
-  caption: '🎪 קרקס החלומות יוצא לסיבוב חנוכה בכל הארץ! ✨
+  - poster-juggler.jpg
+  caption: 'הספירה לאחור לחנוכה התחילה! ⏳🎪
 
 
-    איפה פוגשים אתכם? 👇
+    קרקס החלומות מבית בראבו יוצא לסיבוב הופעות בכל רחבי הארץ ✨
 
-    📍 29.11 מעלה אדומים (היום! 16:30 | 18:30)
-
-    📍 30.11 מודיעין
-
-    📍 1.12 חיפה
-
-    📍 2.12 נס ציונה
-
-    📍 3.12 ראש העין
-
-    📍 5.12 גן שמואל
-
-    📍 6.12 פתח תקווה
-
-    📍 7.12 קריית מוצקין
-
-    📍 8.12 יגור
-
-    📍 9.12 באר שבע
-
-    📍 10.12 ראשון לציון
-
-    📍 11.12 נתניה
-
-    📍 12.12 תל אביב – אולם סמולרש
+    מכשף מרושע גנב את נוצות הקסם של לוכד החלומות… ורק פיה אמיצה וילדה קטנה יכולות להחזיר אותן 🪶
 
 
-    🎟️ כל המועדים והשעות בקופת תל אביב – קישור בביו
+    📍 מודיעין · חיפה · נס ציונה · ראש העין · גן שמואל · פתח תקווה · קריית מוצקין · יגור · באר שבע · ראשון לציון · נתניה · תל אביב
+
+    🎙️ בהנחיית כוכבת הילדים אחינומי
 
 
-    תייגו את מי שבא איתכם לקרקס 🤹‍♀️🎉
+    איפה אתם רואים אותנו? כתבו לנו בתגובות 👇
+
+    🎟️ כרטיסים בקופת תל אביב – הלינק בביו
 
 
-    #קרקסבראבו #קרקסהחלומות #חנוכה #חנוכה2026 #מופעלילדים #בילוילדים #קרקס #סיבובהופעות'
-  idea: מפת הסיבוב – כל הערים והתאריכים של חנוכה בפוסט אחד (מידע מעשי), עם תזכורת להופעות היום במעלה אדומים ועידוד לתייג חברים. עולה ב-13:00 – אחרי פוסט "מחר במודיעין" של 10:00 ולפני ההופעה של 16:30. כל 14 הערים לפי קופת תל אביב (27.11).
+    #קרקסבראבו #קרקסהחלומות #חנוכה #חנוכה2026 #מופעלילדים #בילוילדים #קרקס'
+  idea: פוסט ספירה לאחור לחנוכה (13 ימים עד 12.12.26) עם תזכורת לשריין כרטיסים ושאלה קלה לקהל לעידוד תגובות. זה התאריך הפנוי היחיד ב-3 הימים הקרובים, כי 28.11 ו-30.11 תפוסים.
   approved: true
   status: scheduled
-  ai_generated: true
-  image_prompt: 'Colorful festive digital illustration in a magical circus style: a grand red-and-gold striped big top tent glowing at dusk, strings of warm golden lights, sparkling stars in a deep blue night sky, a whimsical illustrated juggler tossing glowing colorful balls, a cartoon acrobat flipping in mid-air, a cheerful illustrated clown holding a bunch of balloons, a large glowing golden hanukkiah (menorah) with lit candles in the foreground, confetti and tiny stars floating around. Joyful, warm, family-friendly atmosphere, vibrant saturated colors, eye-catching centered composition that stands out in a feed, square format 1:1. No text, no letters, no logos, no real people, no recognizable characters, not photorealistic, clearly an artistic illustration.'

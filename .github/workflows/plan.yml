@@ -20,11 +20,14 @@ jobs:
   run:
     runs-on: ubuntu-latest
     env:
-      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      IG_USER_ID: ${{ secrets.IG_USER_ID || '17841453120285016' }}
       IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      FB_PAGE_ID: ${{ vars.FB_PAGE_ID || '320386741480987' }}
+      GRAPH_HOST: ${{ vars.GRAPH_HOST || 'graph.facebook.com' }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       IMAGE_MODEL: ${{ vars.IMAGE_MODEL || 'gpt-image-2' }}
+      USE_AI_IMAGES: ${{ vars.USE_AI_IMAGES || 'false' }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       DRY_RUN: ${{ vars.DRY_RUN || 'true' }}
       ENABLE_DMS: ${{ vars.ENABLE_DMS || 'false' }}

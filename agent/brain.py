@@ -17,7 +17,21 @@ IMAGE_TYPES = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
 
 
 def _brand() -> str:
-    return BRAND_FILE.read_text(encoding="utf-8")
+    text = BRAND_FILE.read_text(encoding="utf-8")
+    try:  # the live tour schedule (synced from Kupat) is part of what the agent knows
+        import datetime as _dt
+        from .tour import load_tour
+        tour = load_tour()
+        today = _dt.date.today().isoformat()
+        rows = [s for s in tour.get("shows") or [] if str(s.get("date")) >= today]
+        if rows:
+            lines = [f"- {s['date']} {s.get('time', '')} | {s.get('city', '')} | {s.get('venue', '')}"
+                     f" | {s.get('link') or tour.get('default_link', '')}" for s in rows]
+            text += ("\n\n## לוח ההופעות העדכני (מקופת תל אביב) – זה המקור הקובע לתאריכים, שעות ואולמות\n"
+                     + "\n".join(lines))
+    except Exception:
+        pass
+    return text
 
 
 def _json(text: str):
