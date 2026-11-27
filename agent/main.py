@@ -5,6 +5,7 @@
   python -m agent.main publish    # publish today's due post(s)
   python -m agent.main reply      # answer comments (and DMs if ENABLE_DMS=true)
   python -m agent.main tour       # queue "מחר אנחנו מגיעים ל..." posts (poster + Kupat link) from content/tour.yaml
+  python -m agent.main sync       # update content/tour.yaml from the Kupat Tel Aviv site
   python -m agent.main refresh    # extend the Instagram token by 60 days
 """
 from __future__ import annotations
@@ -60,32 +61,50 @@ def cmd_plan(cfg: Config, args) -> None:
         except (KeyError, ValueError):
             pass
 
+    from . import imagegen
+    ai = imagegen.enabled()
     media = sorted(f for f in MEDIA_DIR.glob("*") if f.suffix.lower() in MEDIA_EXT | {".png", ".webp"})
-    if not media:
-        raise SystemExit("אין קבצים בתיקיית media/ – העלו תמונות/סרטונים של הקרקס כדי שהסוכן יוכל לתכנן פוסטים.")
+    if not media and not ai:
+        raise SystemExit("אין קבצים בתיקיית media/ ואין OPENAI_API_KEY – העלו תמונות או הוסיפו מפתח ליצירת תמונות ב-AI.")
     used = {m for p in queue for m in p.get("media", [])}
     # Prefer media that hasn't been posted yet; reuse old media only if needed.
     fresh = [f for f in media if f.name not in used]
-    pool = (fresh + [f for f in media if f.name in used])[:12]
+    pool = (fresh + ([] if ai else [f for f in media if f.name in used]))[:12]
 
     recent = [p["caption"] for p in reversed(queue) if p.get("status") == "published"]
+    upcoming = sorted(d for d in planned_dates if d >= today.isoformat())
     posts = brain(cfg).plan_posts(pool, today.isoformat(), args.days, recent,
-                                  os.getenv("WEEKLY_BRIEF", ""))
+                                  os.getenv("WEEKLY_BRIEF", ""), ai_images=ai, skip_dates=upcoming)
     auto = os.getenv("AUTO_APPROVE", "true").lower() == "true"
     added = 0
     for p in posts:
-        if str(p["date"]) in planned_dates or p["date"] < today.isoformat():
+        date = str(p.get("date", ""))
+        if not date or date in planned_dates or date < today.isoformat():
             continue
-        if not all((MEDIA_DIR / m).exists() for m in p.get("media", [])):
-            log.warning("skip post with unknown media: %s", p.get("media"))
+        files = list(p.get("media") or [])
+        is_ai = False
+        if not files and p.get("image_prompt") and ai:
+            out = MEDIA_DIR / "ai" / f"{date}-{abs(hash(p['image_prompt'])) % 10**8:08d}.jpg"
+            try:
+                imagegen.generate(p["image_prompt"], out)
+            except Exception as e:
+                log.warning("AI image failed for %s: %s", date, e)
+                continue
+            files, is_ai = [str(out.relative_to(MEDIA_DIR))], True
+        if not files or not all((MEDIA_DIR / m).exists() for m in files):
+            log.warning("skip post with missing media: %s", files)
             continue
-        queue.append({
-            "date": str(p["date"]), "time": p.get("time", "18:00"),
-            "media": p["media"], "caption": p["caption"], "idea": p.get("idea", ""),
+        item = {
+            "date": date, "time": p.get("time", "18:00"),
+            "media": files, "caption": p["caption"], "idea": p.get("idea", ""),
             "approved": auto, "status": "scheduled",
-        })
-        planned_dates.add(str(p["date"]))
+        }
+        if is_ai:
+            item.update(ai_generated=True, image_prompt=p["image_prompt"])
+        queue.append(item)
+        planned_dates.add(date)
         added += 1
+        print(f"נוסף פוסט: {date} {'(תמונת AI) ' if is_ai else ''}{files[0]}")
     queue.sort(key=lambda p: (str(p["date"]), str(p.get("time", ""))))
     save_queue(queue)
     print(f"נוספו {added} פוסטים לתור (approved={auto}).")
@@ -203,6 +222,7 @@ def cmd_reply(cfg: Config, _args) -> None:
 
 # ---------------------------------------------------------------- tour
 def cmd_tour(cfg: Config, args) -> None:
+    from . import imagegen
     from . import tour as T
     schedule = T.load_tour()
     queue = load_queue()
@@ -227,9 +247,19 @@ def cmd_tour(cfg: Config, args) -> None:
                     media = []
             else:
                 media = []
+            ai_bg = False
             if not media:
                 out = T.POSTER_DIR / f"{T.slug(stop)}.jpg"
-                T.make_poster(stop, out, base)
+                bg = base
+                if not (base and base.exists()) and imagegen.enabled():
+                    try:
+                        bg = imagegen.generate(T.ai_background_prompt(stop),
+                                               T.POSTER_DIR / f"{T.slug(stop)}-bg.jpg")
+                        ai_bg = True
+                    except Exception as e:
+                        log.warning("AI background failed (%s) – using drawn background", e)
+                        bg = base
+                T.make_poster(stop, out, bg)
                 media = [str(out.relative_to(MEDIA_DIR))]
             caption = ""
             if cfg.anthropic_api_key:
@@ -244,6 +274,7 @@ def cmd_tour(cfg: Config, args) -> None:
                 "media": media, "caption": caption, "idea": f"מחר מגיעים ל{stop['city']}",
                 "approved": os.getenv("AUTO_APPROVE", "true").lower() == "true",
                 "status": "scheduled", "tour_key": key,
+                **({"ai_generated": True} if ai_bg else {}),
             })
             have.add(key)
             added += 1
@@ -251,6 +282,13 @@ def cmd_tour(cfg: Config, args) -> None:
     queue.sort(key=lambda p: (str(p["date"]), str(p.get("time", ""))))
     save_queue(queue)
     print(f"נוספו {added} פוסטים של 'מחר אנחנו מגיעים'.")
+
+
+# ---------------------------------------------------------------- sync (Kupat)
+def cmd_sync(cfg: Config, _args) -> None:
+    from . import kupat
+    n = kupat.sync(brain(cfg))
+    print(f"לוח ההופעות עודכן מקופת תל אביב: {n} מועדים.")
 
 
 # ---------------------------------------------------------------- refresh
@@ -276,11 +314,12 @@ def main(argv=None) -> None:
     sub.add_parser("reply")
     t = sub.add_parser("tour")
     t.add_argument("--days", type=int, default=2, help="כמה ימים קדימה לבדוק בלוח")
+    sub.add_parser("sync")
     sub.add_parser("refresh")
     args = ap.parse_args(argv)
     cfg = Config.load()
     {"check": cmd_check, "plan": cmd_plan, "publish": cmd_publish,
-     "reply": cmd_reply, "tour": cmd_tour, "refresh": cmd_refresh}[args.cmd](cfg, args)
+     "reply": cmd_reply, "tour": cmd_tour, "sync": cmd_sync, "refresh": cmd_refresh}[args.cmd](cfg, args)
 
 
 if __name__ == "__main__":

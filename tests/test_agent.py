@@ -41,7 +41,11 @@ class FakeIG:
 
 
 class FakeBrain:
-    def plan_posts(self, files, today, days, recent, brief):
+    def plan_posts(self, files, today, days, recent, brief, ai_images=False, skip_dates=None):
+        if ai_images:
+            d = dt.date.fromisoformat(today)
+            return [{"date": str(d + dt.timedelta(days=i)), "time": "00:00", "media": [],
+                     "image_prompt": f"circus tent {i}", "caption": f"AI {i}"} for i in range(3)]
         d = dt.date.fromisoformat(today)
         return [{"date": str(d + dt.timedelta(days=i)), "time": "00:00", "media": [f.name],
                  "caption": f"פוסט {i}"} for i, f in enumerate(files)] + \
@@ -106,3 +110,35 @@ def test_tour_posts_day_before_with_poster(repo, monkeypatch, tmp_path):
     assert "מחר אנחנו מגיעים לחיפה" in p["caption"] and "https://kupat/haifa" in p["caption"]
     assert "12:00 | 16:00" in p["caption"]
     assert (tmp_path / "media" / p["media"][0]).exists()
+
+
+def test_plan_with_ai_images(repo, monkeypatch):
+    from agent import imagegen
+    made = []
+    def fake_generate(prompt, out, size="1024x1536"):
+        out.parent.mkdir(parents=True, exist_ok=True); out.write_bytes(b"jpg"); made.append(prompt); return out
+    monkeypatch.setenv("OPENAI_API_KEY", "x")
+    monkeypatch.setattr(imagegen, "generate", fake_generate)
+    monkeypatch.setattr(m, "brain", lambda cfg: FakeBrain())
+    cfg = m.Config.load()
+    m.cmd_plan(cfg, SimpleNamespace(days=3))
+    q = store.load_queue(repo)
+    assert len(q) == 3 and len(made) == 3
+    assert all(p["ai_generated"] and p["media"][0].startswith("ai/") for p in q)
+
+
+def test_kupat_merge_keeps_posters(tmp_path):
+    from agent import kupat
+    import yaml
+    old = {"post_time": "10:00", "shows": [
+        {"date": "2026-12-01", "city": "חיפה", "venue": "x", "poster": "haifa.jpg"},
+        {"date": "2026-12-02", "city": "בוטל", "venue": "y"}]}
+    new = [{"date": "2026-12-01", "time": "18:30", "city": "חיפה", "venue": "אודיטוריום חיפה", "link": "L1"},
+           {"date": "2026-12-03", "time": "16:30", "city": "ראש העין", "venue": "היכל", "link": "L2"}]
+    merged = kupat.merge(new, old)
+    assert [s["city"] for s in merged["shows"]] == ["חיפה", "ראש העין"]
+    assert merged["shows"][0]["poster"] == "haifa.jpg" and merged["post_time"] == "10:00"
+    p = tmp_path / "tour.yaml"; p.write_text("# header\npost_time: '10:00'\n", encoding="utf-8")
+    kupat.save_tour(merged, p)
+    txt = p.read_text(encoding="utf-8")
+    assert txt.startswith("# header") and yaml.safe_load(txt)["shows"][1]["link"] == "L2"

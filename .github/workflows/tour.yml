@@ -1,4 +1,4 @@
-name: פוסט יומי – מחר אנחנו מגיעים ל...
+name: פוסט יומי – מחר אנחנו מגיעים ל... (כולל עדכון מקופת תל אביב)
 on:
   schedule:
     - cron: "17 4 * * *"   # כל יום ב-06:17 (שעון ישראל בחורף) – מכין את הפוסט של היום
@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      IMAGE_MODEL: ${{ vars.IMAGE_MODEL || 'gpt-image-2' }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       DRY_RUN: ${{ vars.DRY_RUN || 'true' }}
       AUTO_APPROVE: ${{ vars.AUTO_APPROVE || 'true' }}
@@ -32,6 +34,11 @@ jobs:
       - name: Hebrew font for posters
         run: sudo apt-get install -y -qq fonts-noto-core >/dev/null || true
       - run: pip install -r requirements.txt
+      - name: Update show schedule from Kupat Tel Aviv
+        continue-on-error: true   # if Kupat is down, keep yesterday's schedule
+        run: |
+          python -m playwright install --with-deps chromium >/dev/null
+          python -m agent.main sync
       - run: python -m agent.main tour --days ${{ inputs.days || 2 }}
       - name: Save state
         run: |
