@@ -56,5 +56,11 @@ html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0d1638}
   document.body.className = f;
   if (f === "story") document.getElementById("photo").src = "../brand/renders/pano-story.jpg";
   if (f === "wide") document.getElementById("photo").src = "../brand/renders/pano-wide.jpg";
+  // ?overlay=1 → only headline + logos on a transparent background (for video)
+  if (new URLSearchParams(location.search).get("overlay")) {
+    document.getElementById("photo").remove();
+    document.documentElement.style.background = "transparent"; document.body.style.background = "transparent";
+    document.querySelector(".sky").style.opacity = ".8";
+  }
 </script>
 </body></html>
