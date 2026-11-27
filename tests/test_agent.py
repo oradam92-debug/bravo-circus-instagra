@@ -117,7 +117,7 @@ def test_plan_with_ai_images(repo, monkeypatch):
     made = []
     def fake_generate(prompt, out, size="1024x1536"):
         out.parent.mkdir(parents=True, exist_ok=True); out.write_bytes(b"jpg"); made.append(prompt); return out
-    monkeypatch.setenv("OPENAI_API_KEY", "x")
+    monkeypatch.setenv("OPENAI_API_KEY", "x"); monkeypatch.setenv("USE_AI_IMAGES", "true")
     monkeypatch.setattr(imagegen, "generate", fake_generate)
     monkeypatch.setattr(m, "brain", lambda cfg: FakeBrain())
     cfg = m.Config.load()

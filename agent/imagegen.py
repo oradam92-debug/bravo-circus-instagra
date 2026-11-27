@@ -32,7 +32,8 @@ STYLE = (
 
 
 def enabled() -> bool:
-    return bool(os.getenv("OPENAI_API_KEY"))
+    """AI images are OFF unless USE_AI_IMAGES=true (the brand's own posters are used instead)."""
+    return bool(os.getenv("OPENAI_API_KEY")) and os.getenv("USE_AI_IMAGES", "false").lower() == "true"
 
 
 def _refs() -> list[Path]:

@@ -6,7 +6,7 @@ posts:
 - date: '2026-11-27'
   time: '10:00'
   media:
-  - tour/2026-11-28-882dabc5.jpg
+  - poster-juggler-hanukkah.jpg
   caption: '🎪✨ מחר אנחנו מגיעים לגבעת ברנר! ✨🎪
 
 
@@ -34,7 +34,7 @@ posts:
 - date: '2026-11-28'
   time: '10:00'
   media:
-  - tour/2026-11-29-43ecfd04.jpg
+  - poster-aerial-hanukkah.jpg
   caption: 'מחר אנחנו מגיעים למעלה אדומים! 🎪✨
 
 
@@ -62,11 +62,10 @@ posts:
   approved: true
   status: scheduled
   tour_key: 2026-11-29|מעלה אדומים
-  ai_generated: true
 - date: '2026-11-29'
   time: '19:00'
   media:
-  - ai/2026-11-29-01871623.jpg
+  - poster-juggler.jpg
   caption: 'הספירה לאחור התחילה! ⏳🎪
 
 
@@ -91,5 +90,3 @@ posts:
   idea: פוסט ספירה לאחור לחנוכה (13 ימים עד 12.12.26) עם תזכורת לשריין כרטיסים ושאלה קלה לקהל לעידוד תגובות. זה התאריך הפנוי היחיד ב-3 הימים הקרובים, כי 28.11 ו-30.11 תפוסים.
   approved: true
   status: scheduled
-  ai_generated: true
-  image_prompt: 'Colorful festive digital illustration in a magical circus style: a grand red-and-gold striped big top tent glowing at dusk, strings of warm golden lights, sparkling stars in a deep blue night sky, a whimsical illustrated juggler tossing glowing colorful balls, a cartoon acrobat flipping in mid-air, a cheerful illustrated clown holding a bunch of balloons, a large glowing golden hanukkiah (menorah) with lit candles in the foreground, confetti and tiny stars floating around. Joyful, warm, family-friendly atmosphere, vibrant saturated colors, eye-catching centered composition that stands out in a feed, square format 1:1. No text, no letters, no logos, no real people, no recognizable characters, not photorealistic, clearly an artistic illustration.'

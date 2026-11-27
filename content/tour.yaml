@@ -13,6 +13,11 @@
 post_time: "10:00"
 # קישור כללי בקופת תל אביב לכל מועדי "קרקס החלומות" – משמש כשאין קישור ספציפי לעיר
 default_link: https://tickets.kupat.co.il/booking/features/3013?display=list
+# הפוסטרים של הקמפיין – פוסט "מחר אנחנו מגיעים" משתמש בהם לסירוגין (לא נוצרות תמונות חדשות)
+default_posters:
+  - poster-juggler-hanukkah.jpg
+  - poster-aerial-hanukkah.jpg
+  - poster-juggler.jpg
 # poster_base: poster-base.jpg   # (לא חובה) תמונת רקע מ-media/ לכל הפוסטרים האוטומטיים
 
 # נאסף מאתרי ההיכלות והכתבות (26.11.26) – לבדוק מול הקופה ולהשלים חסרים.
@@ -26,8 +31,8 @@ shows:
   - {date: 2026-12-03, time: "16:30", city: ראש העין, venue: "היכל התרבות ראש העין"}
   - {date: 2026-12-03, time: "18:30", city: ראש העין, venue: "היכל התרבות ראש העין"}
   - {date: 2026-12-05, time: "11:00", city: גן שמואל, venue: "היכל התרבות מנשה בגן שמואל"}
-  - {date: 2026-12-06, time: "12:30", city: פתח תקווה, venue: "היכל התרבות פתח תקווה"}
-  - {date: 2026-12-06, time: "16:00", city: פתח תקווה, venue: "היכל התרבות פתח תקווה"}
+  - {date: 2026-12-06, time: "12:30", city: פתח תקווה, venue: "היכל התרבות פתח תקווה", poster: special/poster-petah-tikva-6-12.jpg}
+  - {date: 2026-12-06, time: "16:00", city: פתח תקווה, venue: "היכל התרבות פתח תקווה", poster: special/poster-petah-tikva-6-12.jpg}
   - {date: 2026-12-10, time: "12:30", city: ראשון לציון, venue: "היכל התרבות ראשון לציון"}
   - {date: 2026-12-10, time: "16:00", city: ראשון לציון, venue: "היכל התרבות ראשון לציון"}
   - {date: 2026-12-11, time: "10:00", city: נתניה, venue: "היכל התרבות נתניה – האודיטוריום"}

@@ -248,6 +248,9 @@ def cmd_tour(cfg: Config, args) -> None:
             else:
                 media = []
             ai_bg = False
+            own = [m for m in schedule.get("default_posters") or [] if (MEDIA_DIR / m).exists()]
+            if not media and own:  # rotate through the brand's own posters – no new images
+                media = [own[dt.date.fromisoformat(stop["date"]).toordinal() % len(own)]]
             if not media:
                 out = T.POSTER_DIR / f"{T.slug(stop)}.jpg"
                 bg = base
