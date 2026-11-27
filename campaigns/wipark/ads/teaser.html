@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<title>וואי פארק מגיע לאושילנד</title>
+<!-- מודעת טיזר: "וואי פארק מגיע לאושילנד" באותיות מנופחות.
+     גודל נקבע ב-?f=feed|story|wide. הצבעים והלוגו ב-:root – להחליף לצבעים והלוגו המקוריים של וויפארק. -->
+<style>
+@font-face{font-family:Fredoka;font-weight:700;src:url(../brand/fonts/fredoka-hebrew-700-normal.woff2) format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:Fredoka;font-weight:700;src:url(../brand/fonts/fredoka-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:Rubik;font-weight:700;src:url(../brand/fonts/rubik-hebrew-700-normal.woff2) format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:Rubik;font-weight:700;src:url(../brand/fonts/rubik-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F}
+:root{
+  /* הצבעים המקוריים של וויפארק (נדגמו מהלוגו) */
+  --blue:#0156A6; --blue2:#175AA1; --sky:#3D8BE8; --red:#FF133D; --red2:#CA1121; --pinkhi:#FF5D74; --night:#192A5B; --white:#FFFFFF;
+  --w:1080px; --h:1350px; --k:1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:var(--w);height:var(--h);overflow:hidden;background:var(--blue)}
+.ad{position:relative;width:var(--w);height:var(--h);overflow:hidden;font-family:Fredoka,Rubik,sans-serif;color:#fff;
+  background:
+   radial-gradient(circle at 50% 42%, rgba(255,255,255,.22), transparent 55%),
+   radial-gradient(circle at 88% 6%, rgba(255,19,61,.55), transparent 32%),
+   radial-gradient(circle at 8% 96%, rgba(255,19,61,.6), transparent 38%),
+   linear-gradient(170deg, var(--sky), var(--blue) 52%, #013C77);}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.16) 3px,transparent 3.5px);background-size:28px 28px;
+  -webkit-mask-image:radial-gradient(circle at 50% 45%, transparent 30%, #000 75%);mask-image:radial-gradient(circle at 50% 45%, transparent 30%, #000 75%)}
+.burst{position:absolute;left:50%;top:46%;width:calc(1500px*var(--k));height:calc(1500px*var(--k));transform:translate(-50%,-50%);
+  background:repeating-conic-gradient(rgba(255,255,255,.07) 0 6deg, transparent 6deg 15deg);border-radius:50%}
+/* ---------- puffy letters ---------- */
+.puffy{position:relative;display:block;text-align:center;line-height:.98;font-weight:700;letter-spacing:-.01em}
+.puffy span{display:block;white-space:nowrap}
+.puffy .l{position:absolute;inset:0}
+.puffy .ext{color:var(--night);-webkit-text-stroke:calc(34px*var(--k)) var(--night);
+  text-shadow:0 calc(6px*var(--k)) 0 var(--night),0 calc(12px*var(--k)) 0 var(--night),0 calc(18px*var(--k)) 0 var(--night),0 calc(26px*var(--k)) 0 var(--night),
+              0 calc(40px*var(--k)) calc(30px*var(--k)) rgba(0,0,0,.35)}
+.puffy .rim{color:#fff;-webkit-text-stroke:calc(22px*var(--k)) #fff}
+.puffy .fill{background:linear-gradient(180deg,var(--c1) 0%,var(--c2) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.puffy .shine{background:linear-gradient(180deg,rgba(255,255,255,.85) 0%,rgba(255,255,255,.0) 38%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  transform:translateY(calc(-4px*var(--k))) scale(.96);transform-origin:50% 40%}
+.puffy .base{visibility:hidden}
+.t1{--c1:#FFFFFF;--c2:#D9E8FF}
+.t2{--c1:#FFFFFF;--c2:#D9E8FF}
+.t3{--c1:var(--pinkhi);--c2:var(--red)}
+.wordmark{font-size:calc(250px*var(--k));--c1:var(--pinkhi);--c2:var(--red);transform:rotate(-4deg)}
+.logoimg{height:calc(300px*var(--k));transform:rotate(-4deg);filter:drop-shadow(0 calc(16px*var(--k)) calc(18px*var(--k)) rgba(0,0,0,.35))}
+.line2{font-size:calc(150px*var(--k));transform:rotate(-4deg)}
+.line3{font-size:calc(170px*var(--k));transform:rotate(-4deg)}
+.stack{position:absolute;left:0;right:0;top:var(--top);display:flex;flex-direction:column;align-items:center;gap:calc(18px*var(--k))}
+/* ---------- extras ---------- */
+.arc{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.tag{position:absolute;left:50%;transform:translateX(-50%) rotate(2deg);bottom:var(--tagb);background:var(--red);color:#fff;
+  font-family:Rubik,sans-serif;font-weight:700;font-size:calc(46px*var(--k));padding:calc(18px*var(--k)) calc(44px*var(--k));border-radius:999px;
+  border:calc(8px*var(--k)) solid #fff;box-shadow:0 calc(10px*var(--k)) 0 var(--night);white-space:nowrap}
+.sub{position:absolute;left:0;right:0;bottom:var(--subb);text-align:center;font-family:Rubik,sans-serif;font-weight:700;font-size:calc(40px*var(--k));
+  text-shadow:0 3px 0 rgba(0,0,0,.25)}
+.star{position:absolute;width:calc(var(--s)*var(--k));height:calc(var(--s)*var(--k));background:#fff;
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);filter:drop-shadow(0 6px 0 rgba(0,0,0,.25))}
+.pop{position:absolute;width:calc(var(--popw)*var(--k));left:var(--popl);top:var(--popt);transform:rotate(-10deg)}
+.logo{position:absolute;top:calc(48px*var(--k));left:50%;transform:translateX(-50%);height:calc(130px*var(--k))}
+/* sizes */
+body.story{--w:1080px;--h:1920px;--k:1}
+body.wide{--w:1920px;--h:1080px;--k:.74}
+body{--top:300px;--tagb:150px;--subb:72px;--popw:210px;--popl:40px;--popt:40px}
+body.story{--top:600px;--tagb:300px;--subb:215px;--popw:260px;--popl:80px;--popt:260px}
+body.wide{--top:70px;--tagb:150px;--subb:80px;--popw:400px;--popl:150px;--popt:300px}
+</style></head>
+<body>
+<div class="ad">
+  <div class="burst"></div><div class="dots"></div>
+  <svg class="arc" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M8 88 Q 30 8 62 30 T 94 18" fill="none" stroke="#fff" stroke-width=".7" stroke-dasharray="0 36" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-width:14px"/>
+  </svg>
+  <i class="star" style="--s:70px;top:9%;right:12%"></i><i class="star" style="--s:46px;top:16%;left:9%;background:var(--red)"></i>
+  <i class="star" style="--s:56px;bottom:30%;left:7%;background:var(--red)"></i><i class="star" style="--s:38px;top:58%;right:6%;background:#9CC8FF"></i>
+
+  <!-- LOGO: when campaigns/wipark/brand/logo.png exists, render.js swaps the puffy wordmark for <img class="logo"> -->
+  <div class="stack">
+    <div class="puffy wordmark" id="wordmark"><span class="l ext">WIPARK</span><span class="l rim">WIPARK</span><span class="l fill">WIPARK</span><span class="l shine">WIPARK</span><span class="base">WIPARK</span></div>
+    <div class="puffy line3 t2"><span class="l ext">מגיע</span><span class="l rim">מגיע</span><span class="l fill">מגיע</span><span class="l shine">מגיע</span><span class="base">מגיע</span></div>
+    <div class="puffy line3 t3"><span class="l ext">לאושילנד!</span><span class="l rim">לאושילנד!</span><span class="l fill">לאושילנד!</span><span class="l shine">לאושילנד!</span><span class="base">לאושילנד!</span></div>
+  </div>
+
+  <svg class="pop" viewBox="0 0 200 220" aria-hidden="true"><!-- פופ, הקמע -->
+    <ellipse cx="100" cy="212" rx="70" ry="8" fill="rgba(0,0,0,.25)"/>
+    <rect x="52" y="178" width="38" height="24" rx="12" fill="#FF133D" stroke="#192A5B" stroke-width="6"/>
+    <rect x="110" y="178" width="38" height="24" rx="12" fill="#FF133D" stroke="#192A5B" stroke-width="6"/>
+    <circle cx="100" cy="102" r="86" fill="#3D8BE8" stroke="#fff" stroke-width="10"/>
+    <circle cx="100" cy="102" r="86" fill="none" stroke="#192A5B" stroke-width="5"/>
+    <ellipse cx="70" cy="58" rx="26" ry="14" fill="rgba(255,255,255,.55)" transform="rotate(-25 70 58)"/>
+    <circle cx="74" cy="96" r="15" fill="#fff"/><circle cx="128" cy="96" r="15" fill="#fff"/>
+    <circle cx="78" cy="99" r="7" fill="#192A5B"/><circle cx="132" cy="99" r="7" fill="#192A5B"/>
+    <path d="M66 128 Q100 168 136 128 Z" fill="#192A5B"/><path d="M82 140 Q100 156 120 140 Q100 150 82 140Z" fill="#FF133D"/>
+    <path d="M28 70 Q100 -8 172 70" fill="none" stroke="#192A5B" stroke-width="9" stroke-linecap="round"/>
+    <rect x="14" y="66" width="26" height="40" rx="12" fill="#FF133D" stroke="#192A5B" stroke-width="5"/>
+    <rect x="160" y="66" width="26" height="40" rx="12" fill="#FF133D" stroke="#192A5B" stroke-width="5"/>
+  </svg>
+
+  <div class="tag">מ-15.2 · מתחם אושילנד כפר סבא</div>
+  <div class="sub">מתקנים מתנפחים ענקיים · מסלולי מכשולים · מגלשות ענק</div>
+</div>
+<script>
+  const f = new URLSearchParams(location.search).get("f") || "feed";
+  document.body.className = f;
+</script>
+</body></html>
