@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="he" dir="rtl"><head><meta charset="utf-8">
 <title>WIPARK × אושילנד – סדרת טיזר</title>
-<!-- סדרת טיזר (שלב 1, לפני הפתיחה). ?n=1..4  ·  &f=feed (1080x1350, ברירת מחדל) | story (1080x1920)
+<!-- סדרות טיזר והשקה. ?s=teaser|launch  ·  ?n=1..4  ·  &f=feed (1080x1350, ברירת מחדל) | story (1080x1920)
      כללי תוכן: הצילומים הם הדמיה – לא מזכירים מתקנים ספציפיים, מידות, מחירים או תאריכים. -->
 <style>
 @font-face{font-family:Rubik;font-weight:900;src:url(../brand/fonts/rubik-hebrew-900-normal.woff2) format("woff2");unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
@@ -47,10 +47,18 @@ html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0d1638}
     3: { photo: "teaser-3.jpg", kicker: "פארק האקסטרים של ישראל", l1: "האקסטרים",   l2: "מגיע לשרון" },
     4: { photo: "../pano-feed.jpg", story: "../pano-story.jpg", kicker: "", l1: "בקרוב", l2: "באושילנד" },
   };
+  // סדרת ההשקה (שלב 2) – ?s=launch
+  const LAUNCH = {
+    1: { photo: "launch-1.jpg", kicker: "",                        l1: "פתחנו!",     l2: "וואי פארק באושילנד" },
+    2: { photo: "launch-2.jpg", kicker: "פארק האקסטרים של ישראל", l1: "תוציאו",     l2: "את זה!" },
+    3: { photo: "launch-3.jpg", kicker: "",                        l1: "גם ההורים",  l2: "בפנים" },
+    4: { photo: "../pano-feed.jpg", story: "../pano-story.jpg", kicker: "", l1: "מחכים לכם", l2: "באושילנד" },
+  };
   const q = new URLSearchParams(location.search);
-  const f = q.get("f") || "feed", n = q.get("n") || "1", P = POSTS[n];
+  const series = q.get("s") || "teaser";
+  const f = q.get("f") || "feed", n = q.get("n") || "1", P = (series === "launch" ? LAUNCH : POSTS)[n];
   document.body.className = f;
-  document.getElementById("photo").src = "../brand/renders/teaser/" + (f === "story" && P.story ? P.story : P.photo);
+  document.getElementById("photo").src = "../brand/renders/" + series + "/" + (f === "story" && P.story ? P.story : P.photo);
   document.getElementById("kicker").textContent = P.kicker;
   for (const k of ["1", "2"]) { document.getElementById("b" + k).textContent = P["l" + k]; document.getElementById("f" + k).textContent = P["l" + k]; }
   // shrink a line if it is wider than the frame
