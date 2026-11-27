@@ -1,12 +1,12 @@
-name: תכנון פוסטים לשבוע
+name: תכנון פוסטים (כולל תמונות AI)
 on:
   schedule:
-    - cron: "7 5 * * 0"
+    - cron: "37 4 * * *"   # כל יום ~06:37 – משלים פוסטים ל-3 הימים הקרובים
   workflow_dispatch:
     inputs:
       days:
         description: "כמה ימים לתכנן"
-        default: "7"
+        default: "3"
       brief:
         description: "הנחיות לשבוע (לא חובה)"
         default: ""
@@ -23,6 +23,8 @@ jobs:
       IG_USER_ID: ${{ secrets.IG_USER_ID }}
       IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      IMAGE_MODEL: ${{ vars.IMAGE_MODEL || 'gpt-image-2' }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       DRY_RUN: ${{ vars.DRY_RUN || 'true' }}
       ENABLE_DMS: ${{ vars.ENABLE_DMS || 'false' }}
@@ -36,13 +38,13 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - run: python -m agent.main plan --days ${{ inputs.days || 7 }}
+      - run: python -m agent.main plan --days ${{ inputs.days || 3 }}
       - name: Save state
         run: |
           git config user.name "bravo-agent"
           git config user.email "bravo-agent@users.noreply.github.com"
-          git add content state
+          git add content state media
           git diff --cached --quiet && exit 0
-          git commit -m "agent: weekly content plan"
+          git commit -m "agent: content plan"
           git pull --rebase
           git push

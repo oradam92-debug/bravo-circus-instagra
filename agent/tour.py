@@ -90,6 +90,16 @@ def fallback_caption(stop: dict) -> str:
     return "\n".join(lines)
 
 
+def ai_background_prompt(stop: dict) -> str:
+    """Prompt for an AI background; the Hebrew text is drawn on top by make_poster."""
+    return (
+        "A magical circus big-top tent at dusk with red and gold stripes, glowing string lights, "
+        "confetti and stars, Hanukkah candles glowing softly, festive and joyful mood. "
+        "Keep the lower half of the image calm and darker so text can be placed over it. "
+        f"Subtle feeling of the Israeli town {stop['city']} (landscape only, no signs)."
+    )
+
+
 # ---------------------------------------------------------------- poster
 def _font(size: int):
     from PIL import ImageFont
