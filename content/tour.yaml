@@ -16,6 +16,8 @@
 
 # מתעדכן אוטומטית כל בוקר מאתר קופת תל אביב (python -m agent.main sync).
 
+# מתעדכן אוטומטית כל בוקר מאתר קופת תל אביב (python -m agent.main sync).
+
 post_time: '10:00'
 default_link: https://tickets.kupat.co.il/booking/features/3013?display=list
 default_posters:
@@ -43,12 +45,12 @@ shows:
   poster: city/2026-11-29-43ecfd.jpg
 - date: '2026-11-30'
   time: '16:45'
-  city: מודיעין מכבים רעות
+  city: מודיעין-מכבים-רעות
   venue: היכל התרבות מודיעין מכבים רעות
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
 - date: '2026-11-30'
   time: '18:30'
-  city: מודיעין מכבים רעות
+  city: מודיעין-מכבים-רעות
   venue: היכל התרבות מודיעין מכבים רעות
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
 - date: '2026-12-01'
@@ -95,17 +97,17 @@ shows:
   poster: city/2026-12-06-fba717.jpg
 - date: '2026-12-07'
   time: '12:30'
-  city: מוצקין
+  city: קריית מוצקין
   venue: היכל התיאטרון מוצקין
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
 - date: '2026-12-07'
   time: '16:00'
-  city: מוצקין
+  city: קריית מוצקין
   venue: היכל התיאטרון מוצקין
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
 - date: '2026-12-07'
   time: '18:00'
-  city: מוצקין
+  city: קריית מוצקין
   venue: היכל התיאטרון מוצקין
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
 - date: '2026-12-08'
