@@ -174,3 +174,13 @@ def test_defang_never_pings_github_users():
     from agent.main import defang
     assert defang("תשובה ל-@dana ו@yossi.k") == "תשובה ל-`@dana` ו`@yossi.k`"
     assert defang("כבר `@x`") == "כבר `@x`"
+
+
+def test_never_republishes_item_with_ig_id(repo, monkeypatch):
+    ig = FakeIG()
+    monkeypatch.setattr(m, "ig_client", lambda cfg: ig)
+    import datetime as dt
+    store.save_queue([{"date": dt.date.today().isoformat(), "time": "00:00", "media": ["a.jpg"],
+                             "caption": "x", "approved": True, "status": "scheduled", "ig_id": "ALREADY"}], repo)
+    m.cmd_publish(m.Config.load(), None)
+    assert [c for c in ig.calls if c[0] == "pub"] == []

@@ -142,6 +142,7 @@ def cmd_publish(cfg: Config, _args) -> None:
             print(f"[DRY_RUN] היה מתפרסם: {p['date']} {p['media']}")
             continue
         p.update(status="published", ig_id=ig_id, published_at=t.isoformat(timespec="minutes"))
+        save_queue(queue)  # persist immediately so a later failure can never cause a re-publish
         p.pop("last_error", None)
         # Same image as an Instagram Story
         if os.getenv("ALSO_STORY", "true").lower() == "true" and p.get("story", True):

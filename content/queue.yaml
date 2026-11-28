@@ -1,7 +1,3 @@
-# תור הפוסטים של הסוכן.
-# approved: true  -> הסוכן יפרסם בתאריך ובשעה שנקבעו.
-# approved: false -> טיוטה, לא יפורסם.
-# status: published + ig_id נכתבים אוטומטית אחרי הפרסום.
 posts:
 - date: '2026-11-27'
   time: '10:00'
@@ -42,7 +38,8 @@ posts:
   caption: '✨ גבעת ברנר, הקסם בדרך אליכם!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום שבת, 28.11 · 🕐 10:00 | 12:30 | 16:00
 
@@ -135,7 +132,8 @@ posts:
   caption: '🎪 מעלה אדומים – מחר קרקס החלומות אצלכם!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם ✨
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    ✨
 
     📅 יום ראשון, 29.11 · 🕐 16:30 | 18:30
 
@@ -163,13 +161,15 @@ posts:
     מאותו לילה היא כבר לא הצליחה לישון, ולא לחלום.
 
 
-    במופע "קרקס החלומות" פיה יוצאת איתה למסע להחזיר את הנוצות. הדרך עוברת בעולמות קסומים, דמויות פנטזיה ואמני קרקס בינלאומיים, עד העימות עם המכשף. 🎪
+    במופע "קרקס החלומות" פיה יוצאת איתה למסע להחזיר את הנוצות. הדרך עוברת בעולמות
+    קסומים, דמויות פנטזיה ואמני קרקס בינלאומיים, עד העימות עם המכשף. 🎪
 
 
     ומה קורה בסוף? את זה תגלו רק במופע. 😉
 
 
-    מופע קרקס בהנחיית אחינומי, עם אקרובטיקה, הומור, מוזיקה ואפקטים. חנוכה 2026, בכל רחבי הארץ.
+    מופע קרקס בהנחיית אחינומי, עם אקרובטיקה, הומור, מוזיקה ואפקטים. חנוכה 2026, בכל
+    רחבי הארץ.
 
 
     🎟️ כל המועדים והכרטיסים:
@@ -178,11 +178,21 @@ posts:
 
 
     #קרקסבראבו #קרקסהחלומות #חנוכה #מופעלילדים #בילוילדים #קרקס #שחלוםעולהעלכלדמיון'
-  idea: 'סיפור העלילה: הילדה, לוכד החלומות והמכשף שגנב את הנוצות, בלי לחשוף את הסוף. קריאה לכל המועדים ברחבי הארץ.'
+  idea: 'סיפור העלילה: הילדה, לוכד החלומות והמכשף שגנב את הנוצות, בלי לחשוף את הסוף.
+    קריאה לכל המועדים ברחבי הארץ.'
   approved: true
   status: scheduled
   ai_generated: true
-  image_prompt: 'Colorful festive digital illustration in a magical circus style: a little illustrated girl in a cozy nightgown, seen from behind, stands in a dreamy night scene looking up at a giant glowing dreamcatcher. Shimmering golden and violet feathers drift away from it into a starry purple sky. Behind her is a red-and-gold striped circus tent glowing with string lights, a distant Ferris wheel, floating balloons and sparkling purple crystals. Warm gold and deep purple palette, velvet red curtains framing the scene, ornate golden frame feeling, whimsical storybook atmosphere. Portrait composition, bold focal point that stands out in a feed. No text, no letters, no logos, no real people, no famous characters. Clearly an artistic illustration, not a photograph.'
+  image_prompt: 'Colorful festive digital illustration in a magical circus style:
+    a little illustrated girl in a cozy nightgown, seen from behind, stands in a dreamy
+    night scene looking up at a giant glowing dreamcatcher. Shimmering golden and
+    violet feathers drift away from it into a starry purple sky. Behind her is a red-and-gold
+    striped circus tent glowing with string lights, a distant Ferris wheel, floating
+    balloons and sparkling purple crystals. Warm gold and deep purple palette, velvet
+    red curtains framing the scene, ornate golden frame feeling, whimsical storybook
+    atmosphere. Portrait composition, bold focal point that stands out in a feed.
+    No text, no letters, no logos, no real people, no famous characters. Clearly an
+    artistic illustration, not a photograph.'
 - date: '2026-11-29'
   time: '16:00'
   media:
@@ -190,7 +200,8 @@ posts:
   caption: '🌙 מחר קרקס החלומות מגיע למודיעין!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום שני, 30.11 · 🕐 16:45 | 18:30
 
@@ -216,10 +227,12 @@ posts:
 
     קרקס החלומות מבית בראבו יוצא לסיבוב הופעות בכל רחבי הארץ ✨
 
-    מכשף מרושע גנב את נוצות הקסם של לוכד החלומות… ורק פיה אמיצה וילדה קטנה יכולות להחזיר אותן 🪶
+    מכשף מרושע גנב את נוצות הקסם של לוכד החלומות… ורק פיה אמיצה וילדה קטנה יכולות
+    להחזיר אותן 🪶
 
 
-    📍 מודיעין · חיפה · נס ציונה · ראש העין · גן שמואל · פתח תקווה · קריית מוצקין · יגור · באר שבע · ראשון לציון · נתניה · תל אביב
+    📍 מודיעין · חיפה · נס ציונה · ראש העין · גן שמואל · פתח תקווה · קריית מוצקין ·
+    יגור · באר שבע · ראשון לציון · נתניה · תל אביב
 
     🎙️ בהנחיית כוכבת הילדים אחינומי
 
@@ -230,7 +243,9 @@ posts:
 
 
     #קרקסבראבו #קרקסהחלומות #חנוכה #חנוכה2026 #מופעלילדים #בילוילדים #קרקס'
-  idea: פוסט ספירה לאחור לחנוכה (13 ימים עד 12.12.26) עם תזכורת לשריין כרטיסים ושאלה קלה לקהל לעידוד תגובות. זה התאריך הפנוי היחיד ב-3 הימים הקרובים, כי 28.11 ו-30.11 תפוסים.
+  idea: פוסט ספירה לאחור לחנוכה (13 ימים עד 12.12.26) עם תזכורת לשריין כרטיסים ושאלה
+    קלה לקהל לעידוד תגובות. זה התאריך הפנוי היחיד ב-3 הימים הקרובים, כי 28.11 ו-30.11
+    תפוסים.
   approved: true
   status: scheduled
 - date: '2026-11-30'
@@ -240,7 +255,8 @@ posts:
   caption: '🪶 נוצות הקסם עפו… ונחתו בחיפה!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום שלישי, 1.12 · 🕐 16:30
 
@@ -287,7 +303,15 @@ posts:
   approved: true
   status: scheduled
   ai_generated: true
-  image_prompt: 'Vibrant festive digital illustration, magical circus art style: a cheerful illustrated juggler in a sparkly purple-and-gold costume tosses glowing golden hoops and colorful balls in the air. Around them float dreamy translucent bubbles, each holding a different tiny dream scene: a rocket, a castle, a rainbow, a sleepy moon. Background: red-and-gold striped circus tent, warm string lights, twinkling stars, drifting balloons. Rich purple, gold and red palette with a soft magical glow. Square composition, centered eye-catching subject. No text, no letters, no logos, no real people, no famous characters. Clearly an artistic illustration, not a photograph.'
+  image_prompt: 'Vibrant festive digital illustration, magical circus art style: a
+    cheerful illustrated juggler in a sparkly purple-and-gold costume tosses glowing
+    golden hoops and colorful balls in the air. Around them float dreamy translucent
+    bubbles, each holding a different tiny dream scene: a rocket, a castle, a rainbow,
+    a sleepy moon. Background: red-and-gold striped circus tent, warm string lights,
+    twinkling stars, drifting balloons. Rich purple, gold and red palette with a soft
+    magical glow. Square composition, centered eye-catching subject. No text, no letters,
+    no logos, no real people, no famous characters. Clearly an artistic illustration,
+    not a photograph.'
 - date: '2026-12-01'
   time: '16:00'
   media:
@@ -295,7 +319,8 @@ posts:
   caption: '🤸‍♀️ נס ציונה, תפנו מקום לקסם!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום רביעי, 2.12 · 🕐 16:45
 
@@ -333,20 +358,31 @@ posts:
     🏛️ באולמות מקורים עם מושבים מסומנים, ויש מושבים נגישים
 
 
-    📍 הסיבוב ממשיך בראש העין ב-3.12 ובגן שמואל ב-5.12, ואחר כך עוד הרבה ערים עד 12.12.
+    📍 הסיבוב ממשיך בנס ציונה ב-2.12, בראש העין ב-3.12 ובגן שמואל ב-5.12, ואחר כך עוד
+    הרבה ערים עד 12.12.
 
 
-    כל המועדים, ההטבות והכרטיסים:
+    כל המועדים והכרטיסים:
 
     https://www.kupat.co.il/bravo_circus
 
 
     #קרקסבראבו #קרקסהחלומות #חנוכה #חנוכה2026 #מופעלילדים #בילוילדים #קרקס #שחלוםעולהעלכלדמיון'
-  idea: ספירה לאחור לחנוכה עם מידע מעשי (משך, גילאים, כרטיס לכל גיל, אולמות מקורים) והפניה לכל המועדים.
+  idea: ספירה לאחור לחנוכה עם מידע מעשי (משך, גילאים, כרטיס לכל גיל, אולמות מקורים)
+    והפניה לכל המועדים.
   approved: true
   status: scheduled
   ai_generated: true
-  image_prompt: 'Festive magical digital illustration in a circus fantasy style: a large ornate nine-branch Hanukkah menorah (hanukkiah) with unlit candles stands in the foreground, made of gold and decorated with violet crystals. Behind it is a glowing red-and-gold striped circus tent, a Ferris wheel lit with tiny lights, floating balloons and a night sky full of golden stars. Tiny sparkles hint at the holiday about to begin. Deep purple and gold palette, velvet red curtains framing the sides, ornate golden frame details. Portrait composition, strong central focal point that stands out in a feed. No text, no letters, no numbers, no logos, no real people, no famous characters. Clearly an artistic illustration, not a photograph.'
+  image_prompt: 'Festive magical digital illustration in a circus fantasy style: a
+    large ornate nine-branch Hanukkah menorah (hanukkiah) with unlit candles stands
+    in the foreground, made of gold and decorated with violet crystals. Behind it
+    is a glowing red-and-gold striped circus tent, a Ferris wheel lit with tiny lights,
+    floating balloons and a night sky full of golden stars. Tiny sparkles hint at
+    the holiday about to begin. Deep purple and gold palette, velvet red curtains
+    framing the sides, ornate golden frame details. Portrait composition, strong central
+    focal point that stands out in a feed. No text, no letters, no numbers, no logos,
+    no real people, no famous characters. Clearly an artistic illustration, not a
+    photograph.'
 - date: '2026-12-02'
   time: '16:00'
   media:
@@ -354,7 +390,8 @@ posts:
   caption: '🎉 עוד יום אחד וקרקס החלומות בראש העין!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום חמישי, 3.12 · 🕐 16:30 | 18:30
 
@@ -383,7 +420,8 @@ posts:
 
     🌙 שעה ורבע של אקרובטיקה, צבע ודמיון בלי גבולות
 
-    📍 מודיעין · חיפה · נס ציונה · ראש העין · פתח תקווה · קריית מוצקין · באר שבע · ראשון לציון · נתניה · תל אביב ועוד
+    📍 מודיעין · חיפה · נס ציונה · ראש העין · פתח תקווה · קריית מוצקין · באר שבע ·
+    ראשון לציון · נתניה · תל אביב ועוד
 
     🎟️ כרטיסים בקופת תל אביב: https://www.kupat.co.il/bravo_circus
 
@@ -406,10 +444,11 @@ posts:
     📍 היכל התרבות ראש העין
 
 
-    שעה ורבע של אקרובטיקה, הומור, מוזיקה ואפקטים, בהנחיית אחינומי 🤹‍♀️ ועלילה קסומה על מכשף, פיה ונוצות שנעלמו.
+    שעה ורבע של אקרובטיקה, הומור, מוזיקה ואפקטים, בהנחיית אחינומי 🤹‍♀️ ועלילה קסומה
+    על מכשף, פיה ונוצות שנעלמו.
 
 
-    מי מגיע לפתוח את החג איתנו? 🎉
+    מי מגיע לחגוג איתנו את חנוכה? 🎉
 
 
     🎟️ כל המועדים והכרטיסים בקופת תל אביב:
@@ -418,11 +457,20 @@ posts:
 
 
     #קרקסבראבו #קרקסהחלומות #חנוכה #מופעלילדים #בילוילדים #ראשהעין #קרקס'
-  idea: פוסט "היום אנחנו ב..." – ראש העין עם השעות, מאיור של אקרובטים על טרפזים באוהל הקרקס.
+  idea: פוסט "היום אנחנו ב..." – ראש העין עם השעות, מאיור של אקרובטים על טרפזים באוהל
+    הקרקס.
   approved: true
   status: scheduled
   ai_generated: true
-  image_prompt: 'Colorful festive digital illustration in a magical circus style: inside a grand red-and-gold striped circus tent, two illustrated acrobats in sparkly purple and gold costumes fly gracefully between swinging trapezes high above the ring. Warm golden spotlights, glittering stars, floating balloons and red velvet curtains in the background. A rich purple and gold color palette with a dreamy glow. Vertical portrait composition with a bold central focal point that stands out in a social feed. Whimsical, cartoon-like illustrated characters with no recognizable figures. No text, no letters, no logos. Clearly a stylized artistic illustration, not a photograph.'
+  image_prompt: 'Colorful festive digital illustration in a magical circus style:
+    inside a grand red-and-gold striped circus tent, two illustrated acrobats in sparkly
+    purple and gold costumes fly gracefully between swinging trapezes high above the
+    ring. Warm golden spotlights, glittering stars, floating balloons and red velvet
+    curtains in the background. A rich purple and gold color palette with a dreamy
+    glow. Vertical portrait composition with a bold central focal point that stands
+    out in a social feed. Whimsical, cartoon-like illustrated characters with no recognizable
+    figures. No text, no letters, no logos. Clearly a stylized artistic illustration,
+    not a photograph.'
 - date: '2026-12-04'
   time: '16:00'
   media:
@@ -430,7 +478,8 @@ posts:
   caption: '💫 גן שמואל, זה הזמן לחלום בגדול
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום שבת, 5.12 · 🕐 11:00
 
@@ -457,7 +506,8 @@ posts:
     הנר הראשון נדלק הערב, ואנחנו יוצאים לדרך עם סיבוב הופעות בכל הארץ 🎪
 
 
-    חנוכה 2026 עם קרקס החלומות, מהערב של 4.12 ועד 12.12, בהיכלי תרבות ותיאטראות ב-14 ערים.
+    חנוכה 2026 עם קרקס החלומות, מהערב של 4.12 ועד 12.12, בהיכלי תרבות ותיאטראות ב-14
+    ערים.
 
 
     כמה פרטים לתכנון החופשה:
@@ -481,11 +531,19 @@ posts:
 
 
     #קרקסבראבו #קרקסהחלומות #חנוכה #מופעלילדים #בילוילדים #חנוכה2026 #קרקס'
-  idea: ספירה לאחור/ברכת כניסת חג – חנוכה מתחיל הערב, עם מידע מעשי קצר וקריאה לבחור עיר ומועד.
+  idea: ספירה לאחור/ברכת כניסת חג – חנוכה מתחיל הערב, עם מידע מעשי קצר וקריאה לבחור
+    עיר ומועד.
   approved: true
   status: scheduled
   ai_generated: true
-  image_prompt: 'Festive digital illustration in a magical circus style: a giant glowing golden candelabra with nine softly lit flames stands in the center of a whimsical circus fairground at dusk. Behind it are a red-and-gold striped circus tent, a sparkling Ferris wheel and floating balloons in purple, gold and blue. Purple crystals glitter at the sides and a starry night sky glows above. Square composition with a strong central focal point that stands out in a social feed. Warm Hanukkah atmosphere with an enchanted circus feel. No people, no text, no letters, no logos. Clearly a stylized artistic illustration, not a photograph.'
+  image_prompt: 'Festive digital illustration in a magical circus style: a giant glowing
+    golden candelabra with nine softly lit flames stands in the center of a whimsical
+    circus fairground at dusk. Behind it are a red-and-gold striped circus tent, a
+    sparkling Ferris wheel and floating balloons in purple, gold and blue. Purple
+    crystals glitter at the sides and a starry night sky glows above. Square composition
+    with a strong central focal point that stands out in a social feed. Warm Hanukkah
+    atmosphere with an enchanted circus feel. No people, no text, no letters, no logos.
+    Clearly a stylized artistic illustration, not a photograph.'
 - date: '2026-12-05'
   time: '16:00'
   media:
@@ -493,7 +551,8 @@ posts:
   caption: '✨ פתח תקווה, הקסם בדרך אליכם!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום ראשון, 6.12 · 🕐 12:30 | 16:00
 
@@ -517,16 +576,19 @@ posts:
   caption: '🌙 סיפור לפני השינה… ✨
 
 
-    פעם הייתה ילדה קטנה שאהבה לחלום. לילה אחד, מכשף מרושע גנב את נוצות הקסם של לוכד החלומות, ומאותו רגע היא כבר לא הצליחה לישון ולחלום 😢
+    פעם הייתה ילדה קטנה שאהבה לחלום. לילה אחד, מכשף מרושע גנב את נוצות הקסם של לוכד
+    החלומות, ומאותו רגע היא כבר לא הצליחה לישון ולחלום 😢
 
 
-    אבל אז הגיעה פיה, ויחד הן יוצאות למסע להחזיר את הנוצות: דרך עולמות קסומים, דמויות פנטזיה ואמני קרקס מכל העולם 🎪
+    אבל אז הגיעה פיה, ויחד הן יוצאות למסע להחזיר את הנוצות: דרך עולמות קסומים, דמויות
+    פנטזיה ואמני קרקס מכל העולם 🎪
 
 
     ומה קורה כשהן פוגשות את המכשף? את זה מגלים רק במופע 🤹‍♀️
 
 
-    היום בבוקר, ב-11:00, היינו בהיכל התרבות מנשה – גן שמואל. הסיבוב ממשיך ביום ראשון 6.12 בפתח תקווה (12:30 | 16:00).
+    היום בבוקר, ב-11:00, היינו בהיכל התרבות מנשה – גן שמואל. הסיבוב ממשיך ביום ראשון
+    6.12 בפתח תקווה (12:30 | 16:00).
 
 
     שאלה לכם: איזה חלום הייתם שמים בלוכד החלומות? כתבו לנו בתגובות 👇
@@ -538,11 +600,21 @@ posts:
 
 
     #קרקסבראבו #קרקסהחלומות #חנוכה #מופעלילדים #בילוילדים #גןשמואל #קרקס'
-  idea: סיפור העלילה (בלי לחשוף את הסוף) + שאלה לקהל להנעת תגובות, עם איזכור קצר של ההופעה של היום בגן שמואל ושל פתח תקווה ביום ראשון.
+  idea: סיפור העלילה (בלי לחשוף את הסוף) + שאלה לקהל להנעת תגובות, עם איזכור קצר של
+    ההופעה של היום בגן שמואל ושל פתח תקווה ביום ראשון.
   approved: true
   status: scheduled
   ai_generated: true
-  image_prompt: 'Dreamy digital illustration in a magical circus style: a small illustrated girl in pajamas stands in a moonlit enchanted circus field, gazing up at a huge glowing dreamcatcher. Only a few of its shimmering feathers remain, and several glowing feathers float away into a starry purple sky. Beside her, a small friendly fairy with sparkling wings glows softly in gold. A red-and-gold striped circus tent, balloons and a faint Ferris wheel appear in the background. Purple, gold and deep blue palette with a magical glow. Portrait composition with a clear focal point that stands out in a social feed. Original whimsical characters, not recognizable figures. No text, no letters, no logos. Clearly a stylized artistic illustration, not a photograph.'
+  image_prompt: 'Dreamy digital illustration in a magical circus style: a small illustrated
+    girl in pajamas stands in a moonlit enchanted circus field, gazing up at a huge
+    glowing dreamcatcher. Only a few of its shimmering feathers remain, and several
+    glowing feathers float away into a starry purple sky. Beside her, a small friendly
+    fairy with sparkling wings glows softly in gold. A red-and-gold striped circus
+    tent, balloons and a faint Ferris wheel appear in the background. Purple, gold
+    and deep blue palette with a magical glow. Portrait composition with a clear focal
+    point that stands out in a social feed. Original whimsical characters, not recognizable
+    figures. No text, no letters, no logos. Clearly a stylized artistic illustration,
+    not a photograph.'
 - date: '2026-12-06'
   time: '16:00'
   media:
@@ -550,7 +622,8 @@ posts:
   caption: '🎪 קריית מוצקין – מוכנים לחלום?
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום שני, 7.12 · 🕐 12:30 | 16:00 | 18:00
 
@@ -574,7 +647,8 @@ posts:
   caption: '🌙 מחר קרקס החלומות מגיע ליגור!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום שלישי, 8.12 · 🕐 12:30 | 16:00
 
@@ -598,7 +672,8 @@ posts:
   caption: '🪶 נוצות הקסם עפו… ונחתו בבאר שבע!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום רביעי, 9.12 · 🕐 12:30 | 16:00
 
@@ -622,7 +697,8 @@ posts:
   caption: '🤸‍♀️ ראשון לציון, תפנו מקום לקסם!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום חמישי, 10.12 · 🕐 12:30 | 16:00
 
@@ -646,7 +722,8 @@ posts:
   caption: '🎉 עוד יום אחד וקרקס החלומות בנתניה!
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום שישי, 11.12 · 🕐 12:00
 
@@ -670,7 +747,8 @@ posts:
   caption: '💫 תל אביב, זה הזמן לחלום בגדול
 
 
-    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם 🎪
+    מופע קרקס בינלאומי לכל המשפחה בהנחיית אחינומי – אקרובטיקה, הומור, מוזיקה וקסם
+    🎪
 
     📅 יום שבת, 12.12 · 🕐 10:00 | 12:30
 
