@@ -124,7 +124,7 @@ def cmd_publish(cfg: Config, _args) -> None:
     done = 0
     published: list[str] = []
     for p in queue:
-        if p.get("status") == "published" or not p.get("approved"):
+        if p.get("status") == "published" or p.get("ig_id") or not p.get("approved"):
             continue
         if f"{p['date']} {p.get('time', '00:00')}" > stamp:
             continue

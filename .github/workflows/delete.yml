@@ -1,0 +1,32 @@
+name: מחיקת פרסום כפול
+on:
+  workflow_dispatch:
+    inputs:
+      ig_id: {description: "Instagram media id", required: false, default: ""}
+      fb_id: {description: "Facebook post/video id", required: false, default: ""}
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: delete
+        env:
+          TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          PAGE: ${{ vars.FB_PAGE_ID || '320386741480987' }}
+          IG_ID: ${{ inputs.ig_id }}
+          FB_ID: ${{ inputs.fb_id }}
+        run: |
+          pip install -q requests
+          python - <<'PY'
+          import os, requests
+          B = "https://graph.facebook.com/v25.0"
+          tok = os.environ["TOKEN"]
+          if os.environ["IG_ID"]:
+              r = requests.delete(f"{B}/{os.environ['IG_ID']}", params={"access_token": tok}, timeout=60)
+              print("instagram:", r.status_code, r.text[:300])
+          if os.environ["FB_ID"]:
+              pt = requests.get(f"{B}/{os.environ['PAGE']}", params={"fields": "access_token", "access_token": tok}, timeout=30).json().get("access_token", tok)
+              r = requests.delete(f"{B}/{os.environ['FB_ID']}", params={"access_token": pt}, timeout=60)
+              print("facebook:", r.status_code, r.text[:300])
+          PY
