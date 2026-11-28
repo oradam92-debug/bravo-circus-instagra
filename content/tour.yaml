@@ -14,6 +14,8 @@
 
 # מתעדכן אוטומטית כל בוקר מאתר קופת תל אביב (python -m agent.main sync).
 
+# מתעדכן אוטומטית כל בוקר מאתר קופת תל אביב (python -m agent.main sync).
+
 post_time: '10:00'
 default_link: https://tickets.kupat.co.il/booking/features/3013?display=list
 default_posters:
@@ -22,47 +24,33 @@ default_posters:
 - poster-juggler.jpg
 shows:
 - date: '2026-11-28'
-  time: '10:00'
-  city: גבעת ברנר
-  venue: אולם המופעים גבעת ברנר
-  link: https://tickets.kupat.co.il/booking/features/3013?display=list
-  poster: city/2026-11-28-882dab.jpg
-- date: '2026-11-28'
-  time: '12:30'
-  city: גבעת ברנר
-  venue: אולם המופעים גבעת ברנר
-  link: https://tickets.kupat.co.il/booking/features/3013?display=list
-  poster: city/2026-11-28-882dab.jpg
-- date: '2026-11-28'
   time: '16:00'
   city: גבעת ברנר
-  venue: אולם המופעים גבעת ברנר
+  venue: אולם מופעים גבעת ברנר
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
   poster: city/2026-11-28-882dab.jpg
 - date: '2026-11-29'
   time: '16:30'
   city: מעלה אדומים
   venue: היכל התרבות מעלה אדומים
-  link: https://tickets.kupat.co.il/booking/features/3013?display=list&prsntId=55887
+  link: https://tickets.kupat.co.il/booking/features/3013?display=list
   poster: city/2026-11-29-43ecfd.jpg
 - date: '2026-11-29'
   time: '18:30'
   city: מעלה אדומים
   venue: היכל התרבות מעלה אדומים
-  link: https://tickets.kupat.co.il/booking/features/3013?display=list&prsntId=55887
+  link: https://tickets.kupat.co.il/booking/features/3013?display=list
   poster: city/2026-11-29-43ecfd.jpg
 - date: '2026-11-30'
   time: '16:45'
-  city: מודיעין
+  city: מודיעין מכבים רעות
   venue: היכל התרבות מודיעין מכבים רעות
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
-  poster: city/2026-11-30-eeee6a.jpg
 - date: '2026-11-30'
   time: '18:30'
-  city: מודיעין
+  city: מודיעין מכבים רעות
   venue: היכל התרבות מודיעין מכבים רעות
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
-  poster: city/2026-11-30-eeee6a.jpg
 - date: '2026-12-01'
   time: '16:30'
   city: חיפה
@@ -96,33 +84,30 @@ shows:
 - date: '2026-12-06'
   time: '12:30'
   city: פתח תקווה
-  venue: היכל התרבות פתח תקווה
+  venue: היכל התרבות פ"ת
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
   poster: city/2026-12-06-fba717.jpg
 - date: '2026-12-06'
   time: '16:00'
   city: פתח תקווה
-  venue: היכל התרבות פתח תקווה
+  venue: היכל התרבות פ"ת
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
   poster: city/2026-12-06-fba717.jpg
 - date: '2026-12-07'
   time: '12:30'
-  city: קריית מוצקין
+  city: מוצקין
   venue: היכל התיאטרון מוצקין
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
-  poster: city/2026-12-07-031e16.jpg
 - date: '2026-12-07'
   time: '16:00'
-  city: קריית מוצקין
+  city: מוצקין
   venue: היכל התיאטרון מוצקין
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
-  poster: city/2026-12-07-031e16.jpg
 - date: '2026-12-07'
   time: '18:00'
-  city: קריית מוצקין
+  city: מוצקין
   venue: היכל התיאטרון מוצקין
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
-  poster: city/2026-12-07-031e16.jpg
 - date: '2026-12-08'
   time: '12:30'
   city: יגור
@@ -168,13 +153,13 @@ shows:
 - date: '2026-12-12'
   time: '10:00'
   city: תל אביב
-  venue: אולם סמולרש, אוניברסיטת תל אביב
+  venue: אולם סמולרש תל אביב
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
   poster: city/2026-12-12-020db4.jpg
 - date: '2026-12-12'
   time: '12:30'
   city: תל אביב
-  venue: אולם סמולרש, אוניברסיטת תל אביב
+  venue: אולם סמולרש תל אביב
   link: https://tickets.kupat.co.il/booking/features/3013?display=list
   poster: city/2026-12-12-020db4.jpg
 ticket_price: 119 ₪
